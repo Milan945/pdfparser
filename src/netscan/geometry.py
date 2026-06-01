@@ -10,7 +10,7 @@ from typing import Optional
 from netscan.pdf_backend import Char, PageGeometry, RuleLine
 from netscan.types import Span
 
-_BOLD_TOKENS = ("bold", "black", "heavy", "semibold", "demibold")
+_BOLD_TOKENS = ("bold", "black", "heavy")
 _ITALIC_TOKENS = ("italic", "oblique")
 
 
@@ -42,18 +42,27 @@ def _x_overlap_ratio(ch: Char, rule: RuleLine) -> float:
 
 
 def line_decoration(ch: Char, rules: list[RuleLine]) -> Optional[str]:
-    """Return 'strike', 'underline', or None for the glyph given nearby rules."""
+    """Return 'strike', 'underline', or None for the glyph given nearby rules.
+
+    Strike takes precedence over underline regardless of rule order.
+    """
     height = ch.bottom - ch.top
     if height <= 0:
         return None
+    has_strike = False
+    has_underline = False
     for rule in rules:
         if _x_overlap_ratio(ch, rule) < MIN_X_OVERLAP_RATIO:
             continue
         frac = (rule.y_mid - ch.top) / height
         if STRIKE_BAND[0] <= frac <= STRIKE_BAND[1]:
-            return "strike"
-        if UNDERLINE_BAND[0] <= frac <= UNDERLINE_BAND[1]:
-            return "underline"
+            has_strike = True
+        elif UNDERLINE_BAND[0] <= frac <= UNDERLINE_BAND[1]:
+            has_underline = True
+    if has_strike:
+        return "strike"
+    if has_underline:
+        return "underline"
     return None
 
 
