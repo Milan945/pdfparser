@@ -58,17 +58,36 @@ UNDERLINE_BAND = (0.72, 1.35)   # after — catches frac~0.82; gap above STRIKE_
 - Full unit suite: 14/14 pass (synthetic fixtures unaffected by the band change).
 
 ## Failure modes / follow-ups for downstream plans
-1. **Calibration is single-source (WA, one bill).** Other states may place rules at
-   different fracs. Treat `STRIKE_BAND`/`UNDERLINE_BAND`/`MIN_X_OVERLAP_RATIO` as
-   per-corpus tunables; validate against ≥1 bill per new state before trusting output.
+1. **Calibration is single-source (WA, one meaningful bill).** Only HB 1217 carried
+   amendatory content (HB 1100 had none), so the constants are effectively WA-tuned on
+   one document. Other states may place rules at different fracs. Treat
+   `STRIKE_BAND`/`UNDERLINE_BAND`/`MIN_X_OVERLAP_RATIO` as per-corpus tunables;
+   **validate against ≥1 amendatory bill per new state before trusting output.**
+   Cross-state use is NOT yet supported.
 2. **Band-edge ambiguity is exactly the Stage-3 conflict signal.** Rules whose frac
    lands near a band boundary (≈0.70–0.72) should be flagged for VLM/QA adjudication
    rather than silently classified. Build this into conflict detection.
-3. **No scanned pages encountered** — Job B (OCR) path remains untested on real input;
+3. **Widened `UNDERLINE_BAND` (…,1.35) risks false positives from rules BELOW text.**
+   frac 1.35 reaches ~0.35×glyph-height below the char box (~4pt under a 12pt line). A
+   full-width table-cell border or horizontal row separator sitting under a line of
+   text has ≥50% x-overlap with every glyph above it and will now be tagged
+   `underline`. HB 1217's sample showed none (no dense tables), so it is untested, not
+   absent. **Stage-3 must treat horizontal rules below text in tabular regions as
+   adjudication candidates, not silent underlines.**
+4. **`geometry.py` `extract_page_spans` line-bucketing can scramble span TEXT (latent
+   bug, deferred).** The sort key `round(c.top / SAME_LINE_TOL)` only orders by `x0`
+   *within* a bucket, and the merge has no x-adjacency check. When one visual line's
+   glyphs straddle a bucket boundary (e.g. tops 4.4 and 4.6 with tol=3.0 → buckets 1
+   and 2), x-order is scrambled and baked into the merged span text (reproduced:
+   `"ABCD"` → `"ACBD"`). Low-frequency in single-column bills (same-line glyphs usually
+   share an identical `top`), so deferred — but it corrupts text, not just order. **Fix
+   before the multi-column/tabular work: cluster chars into lines first, then sort each
+   line by `x0`, using the same bucket value for both the sort and the same-line test.**
+5. **No scanned pages encountered** — Job B (OCR) path remains untested on real input;
    defer to its own plan as designed.
-4. **Reading order on multi-column / tabular pages not yet stress-tested** — the
+6. **Reading order on multi-column / tabular pages not yet stress-tested** — the
    current top-to-bottom, left-to-right sort is adequate for single-column bill text
-   but must be revisited for tables (already a Stage-3 conflict category).
+   but must be revisited for tables (pairs with #4; already a Stage-3 conflict category).
 
 ## Gate decision
 **PASS.** The architecture's core empirical premise is validated on real bills.
