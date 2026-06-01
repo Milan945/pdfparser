@@ -106,3 +106,15 @@ def test_mixed_format_single_line_splits_into_ordered_spans():
     spans = _eps(geo)
     assert [s.text for s in spans] == ["AB", "CD", "EF"]
     assert [s.bold for s in spans] == [False, True, False]
+
+
+def test_line_straddling_bucket_boundary_keeps_text_order():
+    # One visual line whose glyph tops jitter 4.4/4.6 across the round(top/3.0)
+    # bucket boundary (bucket 1 vs 2). Must still read left-to-right "ABCD".
+    def c(t, x0, top):
+        return Char(text=t, x0=x0, x1=x0 + 6, top=top, bottom=top + 10,
+                    fontname="Helvetica", size=10)
+    chars = [c("A", 10, 4.4), c("B", 16, 4.6), c("C", 22, 4.4), c("D", 28, 4.6)]
+    geo = PageGeometry(width=612, height=792, chars=chars, rule_lines=[], image_count=0)
+    spans = extract_page_spans(geo)
+    assert "".join(s.text for s in spans) == "ABCD"

@@ -82,29 +82,34 @@ def _char_format(ch: Char, rules: list[RuleLine]) -> tuple[bool, bool, bool, boo
 def extract_page_spans(geo: PageGeometry) -> list[Span]:
     """Assemble chars into Spans in reading order (top-to-bottom, left-to-right).
 
-    Consecutive chars on the same line with identical formatting are merged
-    into a single Span.
+    Chars are first clustered into lines by vertical proximity (within
+    SAME_LINE_TOL of the line's first char), then each line is sorted by x0 and
+    consecutive same-format chars are merged into one Span. Clustering before
+    sorting prevents a line whose tops straddle a bucket boundary from scrambling.
     """
-    # reading order: top-to-bottom, then left-to-right
-    chars = sorted(geo.chars, key=lambda c: (round(c.top / SAME_LINE_TOL), c.x0))
-    spans: list[Span] = []
-    cur: Span | None = None
-    cur_fmt: tuple | None = None
-    cur_top: float | None = None
-
-    for ch in chars:
-        fmt = _char_format(ch, geo.rule_lines)
-        same_line = cur_top is not None and abs(ch.top - cur_top) <= SAME_LINE_TOL
-        if cur is not None and fmt == cur_fmt and same_line:
-            cur.text += ch.text
-            cur.x1 = ch.x1
-            cur.bottom = max(cur.bottom, ch.bottom)
+    ordered = sorted(geo.chars, key=lambda c: (c.top, c.x0))
+    lines: list[tuple[float, list[Char]]] = []
+    for ch in ordered:
+        if lines and abs(ch.top - lines[-1][0]) <= SAME_LINE_TOL:
+            lines[-1][1].append(ch)
         else:
-            bold, italic, struck, underlined = fmt
-            cur = Span(text=ch.text, x0=ch.x0, x1=ch.x1, top=ch.top, bottom=ch.bottom,
-                       bold=bold, italic=italic, struck=struck, underlined=underlined,
-                       confidence=1.0, source="geometry")
-            spans.append(cur)
-            cur_fmt = fmt
-            cur_top = ch.top
+            lines.append((ch.top, [ch]))
+
+    spans: list[Span] = []
+    for _, line_chars in lines:
+        cur: Span | None = None
+        cur_fmt: tuple | None = None
+        for ch in sorted(line_chars, key=lambda c: c.x0):
+            fmt = _char_format(ch, geo.rule_lines)
+            if cur is not None and fmt == cur_fmt:
+                cur.text += ch.text
+                cur.x1 = ch.x1
+                cur.bottom = max(cur.bottom, ch.bottom)
+            else:
+                bold, italic, struck, underlined = fmt
+                cur = Span(text=ch.text, x0=ch.x0, x1=ch.x1, top=ch.top, bottom=ch.bottom,
+                           bold=bold, italic=italic, struck=struck, underlined=underlined,
+                           confidence=1.0, source="geometry")
+                spans.append(cur)
+                cur_fmt = fmt
     return spans
