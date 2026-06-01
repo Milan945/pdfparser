@@ -43,3 +43,35 @@ def test_non_overlapping_line_is_ignored():
 
 def test_no_lines_returns_none():
     assert line_decoration(_char(), []) is None
+
+
+# Task 8: assemble page into tagged Spans
+from netscan.pdf_backend import open_pdf
+from netscan.geometry import extract_page_spans
+from tests.fixtures.make_fixtures import build_formatted_pdf
+
+
+def _find(spans, word):
+    for s in spans:
+        if word in s.text:
+            return s
+    raise AssertionError(f"{word!r} not found in {[s.text for s in spans]}")
+
+
+def test_extract_page_spans_tags_fixture(tmp_path):
+    pdf = tmp_path / "s.pdf"
+    build_formatted_pdf(pdf)
+    geo = open_pdf(pdf)[0]
+    spans = extract_page_spans(geo)
+
+    assert _find(spans, "PLAIN").bold is False
+    assert _find(spans, "PLAIN").struck is False
+    assert _find(spans, "BOLDWORD").bold is True
+    assert _find(spans, "ITALICWORD").italic is True
+    assert _find(spans, "STRUCK").struck is True
+    assert _find(spans, "ADDED").underlined is True
+
+    # round-trip: concatenated span text contains every source word
+    joined = " ".join(s.text for s in spans)
+    for w in ("PLAIN", "BOLDWORD", "ITALICWORD", "STRUCK", "ADDED"):
+        assert w in joined

@@ -5,6 +5,11 @@ Strikethrough/underline come from correlating horizontal rule lines against
 glyph boxes (added in Task 7). Thresholds here are CALIBRATED by the Task 9
 real-bill spike; the defaults below are the starting point.
 """
+from typing import Optional
+
+from netscan.pdf_backend import Char, PageGeometry, RuleLine
+from netscan.types import Span
+
 _BOLD_TOKENS = ("bold", "black", "heavy", "semibold", "demibold")
 _ITALIC_TOKENS = ("italic", "oblique")
 
@@ -18,11 +23,6 @@ def is_italic_font(fontname: str) -> bool:
     name = fontname.lower()
     return any(tok in name for tok in _ITALIC_TOKENS)
 
-
-# Task 7: strike/underline detection via rule-line correlation
-from typing import Optional
-
-from netscan.pdf_backend import Char, RuleLine
 
 # bands as fractions of glyph height, measured from `top`
 STRIKE_BAND = (0.30, 0.70)     # mid-glyph
@@ -52,3 +52,47 @@ def line_decoration(ch: Char, rules: list[RuleLine]) -> Optional[str]:
         if UNDERLINE_BAND[0] <= frac <= UNDERLINE_BAND[1]:
             return "underline"
     return None
+
+
+SAME_LINE_TOL = 3.0  # pts; chars whose tops differ by less are on one line
+
+
+def _char_format(ch: Char, rules: list[RuleLine]) -> tuple[bool, bool, bool, bool]:
+    deco = line_decoration(ch, rules)
+    return (
+        is_bold_font(ch.fontname),
+        is_italic_font(ch.fontname),
+        deco == "strike",
+        deco == "underline",
+    )
+
+
+def extract_page_spans(geo: PageGeometry) -> list[Span]:
+    """Assemble chars into Spans in reading order (top-to-bottom, left-to-right).
+
+    Consecutive chars on the same line with identical formatting are merged
+    into a single Span.
+    """
+    # reading order: top-to-bottom, then left-to-right
+    chars = sorted(geo.chars, key=lambda c: (round(c.top / SAME_LINE_TOL), c.x0))
+    spans: list[Span] = []
+    cur: Span | None = None
+    cur_fmt: tuple | None = None
+    cur_top: float | None = None
+
+    for ch in chars:
+        fmt = _char_format(ch, geo.rule_lines)
+        same_line = cur_top is not None and abs(ch.top - cur_top) <= SAME_LINE_TOL
+        if cur is not None and fmt == cur_fmt and same_line:
+            cur.text += ch.text
+            cur.x1 = ch.x1
+            cur.bottom = max(cur.bottom, ch.bottom)
+        else:
+            bold, italic, struck, underlined = fmt
+            cur = Span(text=ch.text, x0=ch.x0, x1=ch.x1, top=ch.top, bottom=ch.bottom,
+                       bold=bold, italic=italic, struck=struck, underlined=underlined,
+                       confidence=1.0, source="geometry")
+            spans.append(cur)
+            cur_fmt = fmt
+            cur_top = ch.top
+    return spans
