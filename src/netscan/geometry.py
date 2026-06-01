@@ -24,9 +24,12 @@ def is_italic_font(fontname: str) -> bool:
     return any(tok in name for tok in _ITALIC_TOKENS)
 
 
-# bands as fractions of glyph height, measured from `top`
+# bands as fractions of glyph height, measured from `top`.
+# Calibrated against real WA bills (HB 1217): strikethrough rules sit ~0.5 of
+# glyph height; underline rules sit ~0.82 (pdfplumber's char box includes
+# descender padding, so the visual baseline is ~0.8, not 1.0).
 STRIKE_BAND = (0.30, 0.70)     # mid-glyph
-UNDERLINE_BAND = (0.85, 1.30)  # at/just below baseline
+UNDERLINE_BAND = (0.72, 1.35)  # at/just below baseline
 MIN_X_OVERLAP_RATIO = 0.5      # rule must cover >= half the glyph width
 
 
