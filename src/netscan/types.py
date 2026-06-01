@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Literal
+from typing import Literal, Optional
 
 Source = Literal["geometry", "font_flag", "vlm", "ocr"]
 
@@ -18,3 +18,4 @@ class Span:
     underlined: bool = False
     confidence: float = 1.0
     source: Source = "geometry"
+    flag_reason: Optional[str] = None
