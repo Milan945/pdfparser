@@ -118,3 +118,12 @@ def test_line_straddling_bucket_boundary_keeps_text_order():
     geo = PageGeometry(width=612, height=792, chars=chars, rule_lines=[], image_count=0)
     spans = extract_page_spans(geo)
     assert "".join(s.text for s in spans) == "ABCD"
+
+
+def test_x_overlap_ratio_is_public():
+    from netscan.geometry import x_overlap_ratio
+    ch = Char(text="x", x0=10, x1=20, top=0, bottom=10, fontname="Helvetica", size=10)
+    full = RuleLine(x0=10, x1=20, top=5, bottom=5)
+    half = RuleLine(x0=15, x1=25, top=5, bottom=5)
+    assert x_overlap_ratio(ch, full) == 1.0
+    assert x_overlap_ratio(ch, half) == 0.5

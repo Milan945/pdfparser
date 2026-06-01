@@ -33,7 +33,7 @@ UNDERLINE_BAND = (0.72, 1.35)  # at/just below baseline
 MIN_X_OVERLAP_RATIO = 0.5      # rule must cover >= half the glyph width
 
 
-def _x_overlap_ratio(ch: Char, rule: RuleLine) -> float:
+def x_overlap_ratio(ch: Char, rule: RuleLine) -> float:
     overlap = min(ch.x1, rule.x1) - max(ch.x0, rule.x0)
     width = ch.x1 - ch.x0
     if width <= 0:
@@ -52,7 +52,7 @@ def line_decoration(ch: Char, rules: list[RuleLine]) -> Optional[str]:
     has_strike = False
     has_underline = False
     for rule in rules:
-        if _x_overlap_ratio(ch, rule) < MIN_X_OVERLAP_RATIO:
+        if x_overlap_ratio(ch, rule) < MIN_X_OVERLAP_RATIO:
             continue
         frac = (rule.y_mid - ch.top) / height
         if STRIKE_BAND[0] <= frac <= STRIKE_BAND[1]:
