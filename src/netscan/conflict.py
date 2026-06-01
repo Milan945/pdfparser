@@ -20,6 +20,7 @@ from netscan.types import Span
 BAND_EDGE_RANGE = (0.66, 0.76)      # boundary neighborhood of strike-top/underline-floor
 BAND_EDGE_CONFIDENCE = 0.5
 WIDE_RULE_CONFIDENCE = 0.5
+ORPHAN_RULE_CONFIDENCE = 0.5
 MIN_ORPHAN_RULE_WIDTH = 8.0         # pts; shorter uninterpreted rules are noise
 WIDE_RULE_FACTOR = 1.5              # rule wider than this x its text run -> suspect border
 CANDIDATE_FRAC_RANGE = (0.0, 1.4)   # fracs a rule could plausibly be decorating
@@ -59,13 +60,13 @@ def _candidate_glyphs(geo: PageGeometry, rule: RuleLine) -> list[tuple[Char, flo
 
 def _flag_span_for_glyph(ch: Char, spans: list[Span], reason: str,
                          confidence: float) -> None:
-    """Flag the span that covers this glyph (first reason wins; confidence lowered)."""
+    """Flag the span covering this glyph: first reason wins, lowest confidence applied."""
     for s in spans:
         if (s.top - 2 <= ch.top <= s.bottom + 2
                 and s.x0 - 1 <= ch.x0 and ch.x1 <= s.x1 + 1):
             if s.flag_reason is None:
                 s.flag_reason = reason
-                s.confidence = min(s.confidence, confidence)
+            s.confidence = min(s.confidence, confidence)
             return
 
 
@@ -105,7 +106,7 @@ def detect_conflicts(geo: PageGeometry,
                 conflicts.append(Conflict(
                     "orphan_rule",
                     "horizontal rule over text matched no strike/underline band",
-                    rx0, rx1, rtop, rbot, 0.5))
+                    rx0, rx1, rtop, rbot, ORPHAN_RULE_CONFIDENCE))
 
         # 4.3 wide underline: likely a table/row border, not a real underline
         if has_under:

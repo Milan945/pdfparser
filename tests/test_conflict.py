@@ -1,6 +1,6 @@
 from netscan.pdf_backend import Char, PageGeometry, RuleLine
 from netscan.types import Span
-from netscan.conflict import detect_conflicts, Conflict
+from netscan.conflict import detect_conflicts
 
 
 def _char(t, x0, top=100.0):
@@ -79,3 +79,22 @@ def test_full_line_underline_near_page_width_is_not_flagged():
     out, conflicts = detect_conflicts(geo, [span])
     assert not any(c.kind == "wide_underline" for c in conflicts)
     assert out[0].flag_reason is None
+
+
+def test_band_edge_fires_even_when_glyph_is_cleanly_classified():
+    ch = _char("X", 10)                                    # top 100, h 10
+    rule = RuleLine(x0=10, x1=16, top=106.8, bottom=106.8) # frac 0.68: strike-band AND edge
+    geo = PageGeometry(width=612, height=792, chars=[ch],
+                       rule_lines=[rule], image_count=0)
+    out, conflicts = detect_conflicts(geo, [_span("X", 10, 16)])
+    assert any(c.kind == "band_edge" for c in conflicts)
+    assert out[0].flag_reason is not None and "band_edge" in out[0].flag_reason
+
+
+def test_narrow_rule_below_min_width_is_not_orphan():
+    ch = _char("Y", 10)
+    rule = RuleLine(x0=10, x1=15, top=100.0, bottom=100.0)  # frac 0.0 no band; width 5 < 8
+    geo = PageGeometry(width=612, height=792, chars=[ch],
+                       rule_lines=[rule], image_count=0)
+    out, conflicts = detect_conflicts(geo, [_span("Y", 10, 16)])
+    assert not any(c.kind == "orphan_rule" for c in conflicts)
