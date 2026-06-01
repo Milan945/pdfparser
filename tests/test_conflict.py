@@ -64,3 +64,18 @@ def test_wide_underline_rule_flags_as_possible_border():
     assert any(c.kind == "wide_underline" for c in conflicts)
     assert out[0].flag_reason is not None and "wide_underline" in out[0].flag_reason
     assert out[0].underlined is True
+
+
+def test_full_line_underline_near_page_width_is_not_flagged():
+    # Legitimate full-line underlined addition: rule width ~= text run width and
+    # near page width. Must NOT be flagged (regression: a page-fraction trigger
+    # falsely flagged real full-line insertions on WA HB 1217).
+    left = _char("L", 60)                                      # x 60..66
+    right = _char("R", 550)                                    # x 550..556
+    rule = RuleLine(x0=60, x1=556, top=108.2, bottom=108.2)    # frac 0.82; rw 496 ~= run 496
+    geo = PageGeometry(width=612, height=792, chars=[left, right],
+                       rule_lines=[rule], image_count=0)
+    span = _span("LR", 60, 556, underlined=True)
+    out, conflicts = detect_conflicts(geo, [span])
+    assert not any(c.kind == "wide_underline" for c in conflicts)
+    assert out[0].flag_reason is None

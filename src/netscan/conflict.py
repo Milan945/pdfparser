@@ -22,7 +22,6 @@ BAND_EDGE_CONFIDENCE = 0.5
 WIDE_RULE_CONFIDENCE = 0.5
 MIN_ORPHAN_RULE_WIDTH = 8.0         # pts; shorter uninterpreted rules are noise
 WIDE_RULE_FACTOR = 1.5              # rule wider than this x its text run -> suspect border
-WIDE_RULE_PAGE_FRAC = 0.8           # ...or wider than this x page width
 CANDIDATE_FRAC_RANGE = (0.0, 1.4)   # fracs a rule could plausibly be decorating
 
 
@@ -114,8 +113,13 @@ def detect_conflicts(geo: PageGeometry,
                   if UNDERLINE_BAND[0] <= f <= UNDERLINE_BAND[1]]
             run = max(ch.x1 for ch in ug) - min(ch.x0 for ch in ug)
             rule_w = rule.x1 - rule.x0
-            if run > 0 and (rule_w > WIDE_RULE_FACTOR * run
-                            or rule_w > WIDE_RULE_PAGE_FRAC * geo.width):
+            # A genuine table/row border is much wider than the text it covers.
+            # This is deliberately NOT a page-width test: legitimate full-line
+            # underlined additions in bills naturally span nearly the full text
+            # column (rule_w ~= run), so a page-fraction trigger floods the QA queue
+            # with real insertions (verified on WA HB 1217: 24/24 page-frac fires were
+            # ratio~1.0 false positives). Width-vs-text-run is the reliable signal.
+            if run > 0 and rule_w > WIDE_RULE_FACTOR * run:
                 for ch in ug:
                     _flag_span_for_glyph(
                         ch, spans,

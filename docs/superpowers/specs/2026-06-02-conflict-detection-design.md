@@ -69,14 +69,21 @@ a rule the geometry saw but couldn't interpret must never vanish silently. Page-
 rules (no glyph x-overlap at all) are NOT orphans and are ignored.
 
 ### 4.3 Wide "underline" rules (table/row-border false positives)
-The gate widened `UNDERLINE_BAND` to `(0.72, 1.35)`, which makes a full-width row/cell
-border under text classifiable as underline. Detection: for any rule that produced an
-underline classification, if the rule's width exceeds `WIDE_RULE_FACTOR = 1.5 ×` the
-total x-extent of the underlined glyph run it covers (or exceeds `WIDE_RULE_PAGE_FRAC =
-0.8 ×` page width), flag every span it underlined with `flag_reason="wide_underline:
-rule may be a table/row border"`, lower `confidence` to `WIDE_RULE_CONFIDENCE = 0.5`,
-and emit `Conflict(kind="wide_underline")`. The underline tag is RETAINED (not removed)
-— Stage 3 flags, it does not resolve.
+The gate widened `UNDERLINE_BAND` to `(0.72, 1.35)`, which makes a row/cell border under
+text classifiable as underline. Detection: for any rule that produced an underline
+classification, if the rule's width exceeds `WIDE_RULE_FACTOR = 1.5 ×` the total x-extent
+of the underlined glyph run it covers, flag every span it underlined with
+`flag_reason="wide_underline: rule may be a table/row border"`, lower `confidence` to
+`WIDE_RULE_CONFIDENCE = 0.5`, and emit `Conflict(kind="wide_underline")`. The underline
+tag is RETAINED (not removed) — Stage 3 flags, it does not resolve.
+
+**Calibration note (validated on WA HB 1217):** an earlier draft also flagged rules wider
+than `0.8 ×` page width. That was removed — legitimate full-line underlined *additions*
+naturally span nearly the full text column (rule_w ≈ run), so the page-fraction trigger
+produced 24/24 false positives on real bill text (all ratio ≈ 1.0). Width-vs-text-run is
+the only reliable border signal until real table-layout detection exists (deferred, §6).
+Width-alone cannot distinguish a full-row border (text fills the row) from a full-line
+underline; that case needs the deferred multi-column/table analysis.
 
 ## 5. Bundled fix — span-text scramble (gate follow-up #4)
 
