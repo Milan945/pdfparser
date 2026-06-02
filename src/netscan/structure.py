@@ -26,3 +26,30 @@ def line_clusters(chars: list[Char]) -> list[list[Char]]:
     for line in out:
         line.sort(key=lambda c: c.x0)
     return out
+
+
+_CA_LABEL = re.compile(r"^\s*line\s+\d+\s+", re.IGNORECASE)
+
+
+def _strip_ca(chars: list[Char]) -> list[Char]:
+    keep: list[Char] = []
+    for line in line_clusters(chars):
+        text = "".join(c.text for c in line)
+        m = _CA_LABEL.match(text)
+        keep.extend(line[m.end():] if m else line)
+    return keep
+
+
+def _strip_ks(chars: list[Char]) -> list[Char]:
+    return list(chars)
+
+
+def strip_gutter(geo: PageGeometry, profile: StateProfile) -> PageGeometry:
+    """Return a copy of geo with the line-number gutter chars removed."""
+    if profile.gutter == "ca_line_label":
+        kept = _strip_ca(geo.chars)
+    elif profile.gutter == "ks_line_numbers":
+        kept = _strip_ks(geo.chars)
+    else:
+        kept = list(geo.chars)
+    return replace(geo, chars=kept)
