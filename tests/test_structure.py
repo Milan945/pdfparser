@@ -1,6 +1,20 @@
+from pathlib import Path
+import pytest
 from netscan.profiles import PROFILES, StateProfile
-from netscan.pdf_backend import Char, PageGeometry
+from netscan.pdf_backend import Char, PageGeometry, open_pdf
+from netscan.geometry import extract_page_spans
 from netscan.structure import line_clusters, strip_gutter
+
+_KS = Path("samples/there samples/2025_2026_16_2_2_002206_0_4_1_20250203_0.pdf")
+
+
+@pytest.mark.skipif(not _KS.exists(), reason="KS sample bill not present")
+def test_ks_gutter_strip_fixes_fused_statute_number():
+    page = open_pdf(_KS)[0]
+    stripped = strip_gutter(page, PROFILES["KS"])
+    text = "".join(s.text for s in extract_page_spans(stripped))
+    assert "74-50,297" in text
+    assert "74-1050,297" not in text
 
 
 def _line(text, top, x0=20.0):
