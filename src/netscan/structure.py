@@ -41,7 +41,30 @@ def _strip_ca(chars: list[Char]) -> list[Char]:
 
 
 def _strip_ks(chars: list[Char]) -> list[Char]:
-    return list(chars)
+    lines = line_clusters(chars)
+    texts = ["".join(c.text for c in line) for line in lines]
+    # numbering starts at the first line whose leading digit-run begins with "1"
+    start = None
+    for i, t in enumerate(texts):
+        lead = re.match(r"\d+", t)
+        if lead and lead.group().startswith("1"):
+            start = i
+            break
+    if start is None:
+        return list(chars)
+    keep: list[Char] = []
+    counter = 1
+    for i, line in enumerate(lines):
+        if i < start:
+            keep.extend(line)
+            continue
+        prefix = str(counter)
+        if texts[i].startswith(prefix):
+            keep.extend(line[len(prefix):])
+            counter += 1
+        else:
+            keep.extend(line)
+    return keep
 
 
 def strip_gutter(geo: PageGeometry, profile: StateProfile) -> PageGeometry:

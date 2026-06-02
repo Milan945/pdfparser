@@ -12,6 +12,37 @@ def _line(text, top, x0=20.0):
     return chars
 
 
+def test_ks_strip_removes_sequential_counter_prefix():
+    # line numbers 1,2,3 fused at start; body left margin x0=55
+    chars = _line("1AN ACT concerning", 186, x0=55.0)
+    chars += _line("2governmental ethics", 198, x0=55.0)
+    chars += _line("3Kansas public", 209, x0=55.0)
+    geo = PageGeometry(width=600, height=800, chars=chars,
+                       rule_lines=[], image_count=0)
+    out = strip_gutter(geo, PROFILES["KS"])
+    text_by_line = ["".join(c.text for c in line)
+                    for line in line_clusters(out.chars)]
+    assert text_by_line == ["AN ACT concerning",
+                            "governmental ethics",
+                            "Kansas public"]
+
+
+def test_ks_strip_strips_only_counter_not_following_digits():
+    # line 7 begins with statute number 25-4119a -> "725-4119a"
+    chars = _line("1first", 100, x0=55.0)
+    chars += _line("2second", 112, x0=55.0)
+    chars += _line("3third", 124, x0=55.0)
+    chars += _line("4fourth", 136, x0=55.0)
+    chars += _line("5fifth", 148, x0=55.0)
+    chars += _line("6sixth", 160, x0=55.0)
+    chars += _line("725-4119a", 172, x0=55.0)
+    geo = PageGeometry(width=600, height=800, chars=chars,
+                       rule_lines=[], image_count=0)
+    out = strip_gutter(geo, PROFILES["KS"])
+    last = "".join(c.text for c in line_clusters(out.chars)[-1])
+    assert last == "25-4119a"
+
+
 def test_ca_strip_removes_line_label_prefix():
     chars = _line(" line 1 SECTION 1. Section 84308", 100)
     chars += _line(" line 2 amended to read:", 112)
