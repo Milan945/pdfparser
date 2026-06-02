@@ -48,10 +48,10 @@ def test_ca_real_bill_normalized_text_has_plain_forms():
     # plain forms present
     assert "party's agent" in text          # was party’s agent
     assert '"Party"' in text                 # was curly double quotes
-    assert "/" in text and "⁄" not in text   # was 2⁄3 vote; numerator is a
-    #                                          separate staggered span (reassembly
-    #                                          is a later slice), so assert the
-    #                                          fraction slash became ASCII '/'
+    # was "2⁄3 vote": the fraction slash must become ASCII '/'. The contextual
+    # "2/3" check is deferred to the staggered-numerator reassembly slice (the
+    # numerator is a separate span), and "⁄ not in text" is asserted below.
+    assert "/" in text
     # quirks gone
     assert "’" not in text and "‘" not in text
     assert "“" not in text and "”" not in text
