@@ -8,10 +8,9 @@ from __future__ import annotations
 import re
 from dataclasses import replace
 
+from netscan.geometry import SAME_LINE_TOL
 from netscan.pdf_backend import Char, PageGeometry
 from netscan.profiles import StateProfile
-
-SAME_LINE_TOL = 3.0
 
 
 def line_clusters(chars: list[Char]) -> list[list[Char]]:
@@ -43,11 +42,12 @@ def _strip_ca(chars: list[Char]) -> list[Char]:
 def _strip_ks(chars: list[Char]) -> list[Char]:
     lines = line_clusters(chars)
     texts = ["".join(c.text for c in line) for line in lines]
-    # numbering starts at the first line whose leading digit-run begins with "1"
+    # numbering starts at the first line whose leading digit-run is exactly "1"
+    # (the literal line number 1); a run like "10" or "1,000" must NOT anchor.
     start = None
     for i, t in enumerate(texts):
         lead = re.match(r"\d+", t)
-        if lead and lead.group().startswith("1"):
+        if lead and lead.group() == "1":
             start = i
             break
     if start is None:
