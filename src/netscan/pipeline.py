@@ -19,11 +19,15 @@ from netscan.emit import render_markup
 def convert(pdf_path: str, state: str) -> str:
     """Convert a bill PDF to paragraph-structured NetScan markup text."""
     profile = PROFILES[state]
-    spans = []
+    # Reflow per page: lines_of sorts spans by `top`, but `top` resets each page,
+    # so pooling pages before reflow would interleave reading order (and float
+    # each page's top-of-page header to the document front). Grouping per page
+    # and concatenating in page order preserves reading order.
+    paras: list = []
     for geo in open_pdf(Path(pdf_path)):
         geo = strip_gutter(geo, profile)
-        spans.extend(extract_page_spans(geo))
-    paras = paragraphs(spans, profile)
+        spans = extract_page_spans(geo)
+        paras.extend(paragraphs(spans, profile))
     rendered = [render_markup(p).strip() for p in paras]
     return "\n\n".join(r for r in rendered if r)
 
