@@ -1,122 +1,138 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import React, { useState } from 'react'
 import './App.css'
+import { UploadZone } from './components/UploadZone'
+import { PdfPanel } from './components/PdfPanel'
+import { MarkupPanel } from './components/MarkupPanel'
+import { EditorPanel } from './components/EditorPanel'
 
-function App() {
-  const [count, setCount] = useState(0)
+type AppState = 'idle' | 'uploading' | 'ready' | 'needs-state' | 'error'
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+interface ConversionResult {
+  sessionId: string
+  state: string
+  markup: string
+  filename: string
 }
 
-export default App
+const SUPPORTED_STATES = ['CA', 'KS']
+
+export default function App() {
+  const [appState, setAppState] = useState<AppState>('idle')
+  const [result, setResult] = useState<ConversionResult | null>(null)
+  const [pendingFile, setPendingFile] = useState<File | null>(null)
+  const [selectedState, setSelectedState] = useState('CA')
+  const [errorMsg, setErrorMsg] = useState('')
+  const [scrollRatio, setScrollRatio] = useState(0)
+
+  async function runUpload(file: File, state?: string) {
+    setAppState('uploading')
+    const form = new FormData()
+    form.append('file', file)
+    if (state) form.append('state', state)
+
+    try {
+      const res = await fetch('/upload', { method: 'POST', body: form })
+      const body = await res.json()
+
+      if (!res.ok) {
+        setErrorMsg(body.detail ?? 'Upload failed.')
+        setAppState('error')
+        return
+      }
+
+      if (body.state === null) {
+        setPendingFile(file)
+        setAppState('needs-state')
+        return
+      }
+
+      setResult({
+        sessionId: body.session_id,
+        state: body.state,
+        markup: body.markup,
+        filename: body.filename,
+      })
+      setAppState('ready')
+    } catch {
+      setErrorMsg('Network error — is the API server running?')
+      setAppState('error')
+    }
+  }
+
+  function handleFile(file: File) {
+    runUpload(file)
+  }
+
+  function handleConvertWithState() {
+    if (pendingFile) runUpload(pendingFile, selectedState)
+  }
+
+  function handleReset() {
+    if (result) {
+      fetch(`/session/${result.sessionId}`, { method: 'DELETE' })
+    }
+    setResult(null)
+    setPendingFile(null)
+    setAppState('idle')
+    setErrorMsg('')
+    setScrollRatio(0)
+  }
+
+  if (appState === 'idle') {
+    return (
+      <div className="center-page">
+        <h1>NetScan Bill Converter</h1>
+        <UploadZone onFile={handleFile} />
+      </div>
+    )
+  }
+
+  if (appState === 'uploading') {
+    return (
+      <div className="center-page">
+        <p className="spinner-text">Analyzing bill…</p>
+      </div>
+    )
+  }
+
+  if (appState === 'needs-state') {
+    return (
+      <div className="center-page">
+        <p>Could not auto-detect state. Please select one:</p>
+        <select value={selectedState} onChange={e => setSelectedState(e.target.value)}>
+          {SUPPORTED_STATES.map(s => <option key={s}>{s}</option>)}
+        </select>
+        <button className="primary-btn" onClick={handleConvertWithState}>
+          Convert
+        </button>
+      </div>
+    )
+  }
+
+  if (appState === 'error') {
+    return (
+      <div className="center-page">
+        <p className="error-msg">{errorMsg}</p>
+        <UploadZone onFile={handleFile} />
+      </div>
+    )
+  }
+
+  return (
+    <div className="app-ready">
+      <div className="top-bar">
+        <span className="state-badge">{result!.state} — auto-detected</span>
+        <button className="reset-btn" onClick={handleReset}>Upload new bill</button>
+      </div>
+      <div className="panels">
+        <PdfPanel sessionId={result!.sessionId} scrollRatio={scrollRatio} />
+        <MarkupPanel
+          markup={result!.markup}
+          filename={result!.filename}
+          onScrollRatio={setScrollRatio}
+        />
+        <EditorPanel initialMarkup={result!.markup} filename={result!.filename} />
+      </div>
+    </div>
+  )
+}
