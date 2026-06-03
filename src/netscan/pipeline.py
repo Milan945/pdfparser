@@ -5,7 +5,9 @@ paragraphs -> render_markup per paragraph, joining paragraphs with blank lines.
 Also a CLI:  python -m netscan.pipeline <bill.pdf> <STATE> [out.txt]
 """
 from __future__ import annotations
+import os
 import sys
+import tempfile
 from pathlib import Path
 
 from netscan.pdf_backend import open_pdf
@@ -30,6 +32,20 @@ def convert(pdf_path: str, state: str) -> str:
         paras.extend(paragraphs(spans, profile))
     rendered = [render_markup(p).strip() for p in paras]
     return "\n\n".join(r for r in rendered if r)
+
+
+def convert_bytes(data: bytes, state: str) -> str:
+    """Convert raw PDF bytes (e.g. an uploaded file) to markup text.
+
+    Writes to a temporary file because the pdf backend opens by path.
+    """
+    with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as fh:
+        fh.write(data)
+        tmp = fh.name
+    try:
+        return convert(tmp, state)
+    finally:
+        os.unlink(tmp)
 
 
 def main(argv: list[str]) -> int:
