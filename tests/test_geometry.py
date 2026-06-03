@@ -120,6 +120,20 @@ def test_line_straddling_bucket_boundary_keeps_text_order():
     assert "".join(s.text for s in spans) == "ABCD"
 
 
+def test_zero_width_ligature_keeps_stream_order():
+    # Reproduces the real "five" case: a zero-width 'fi' ligature whose x0 lands
+    # just RIGHT of the following 'v'. Pure-x0 sort gives "vfie"; the builder must
+    # emit "five" by falling back to content-stream order for the sub-1pt overlap.
+    def c(t, x0, x1):
+        return Char(text=t, x0=x0, x1=x1, top=100.0, bottom=110.0,
+                    fontname="Times-Roman", size=10)
+    # stream order is correct: f-i(ligature), v, e
+    chars = [c("fi", 94.63, 94.63), c("v", 94.56, 100.56), c("e", 106.97, 112.30)]
+    geo = PageGeometry(width=612, height=792, chars=chars, rule_lines=[], image_count=0)
+    spans = _eps(geo)
+    assert "".join(s.text for s in spans) == "five"
+
+
 def test_x_overlap_ratio_is_public():
     from netscan.geometry import x_overlap_ratio
     ch = Char(text="x", x0=10, x1=20, top=0, bottom=10, fontname="Helvetica", size=10)
