@@ -126,10 +126,22 @@ def extract_page_spans(geo: PageGeometry) -> list[Span]:
 
     spans: list[Span] = []
     for _, line_chars in lines:
+        ordered_chars = sorted(line_chars, key=line_order_key)
+        fmts = [_char_format(ch, geo.rule_lines) for ch in ordered_chars]
+        # A zero-width glyph (a ligature like "fi") cannot overlap a rule line, so
+        # its strike/underline is never detected on its own. Inherit those from a
+        # neighbour (the following glyph it sits within, else the preceding one)
+        # so a struck word like "five" is not split into struck + unstruck parts.
+        for idx, ch in enumerate(ordered_chars):
+            if ch.x1 <= ch.x0:
+                src = fmts[idx + 1] if idx + 1 < len(fmts) else (
+                    fmts[idx - 1] if idx > 0 else None)
+                if src is not None:
+                    bold, italic, _, _ = fmts[idx]
+                    fmts[idx] = (bold, italic, src[2], src[3])
         cur: Span | None = None
         cur_fmt: tuple | None = None
-        for ch in sorted(line_chars, key=line_order_key):
-            fmt = _char_format(ch, geo.rule_lines)
+        for ch, fmt in zip(ordered_chars, fmts):
             if cur is not None and fmt == cur_fmt:
                 cur.text += ch.text
                 cur.x1 = ch.x1
