@@ -21,19 +21,26 @@ from netscan.geometry import extract_page_spans
 from netscan.profiles import PROFILES
 from netscan.reflow import paragraphs
 from netscan.emit import render_markup
-from netscan.scope import suppress_preamble_additions
+from netscan.scope import suppress_preamble_additions, has_enacting_clause
 
 
 def convert(pdf_path: str, state: str) -> str:
     """Convert a bill PDF to paragraph-structured NetScan markup text."""
     profile = PROFILES[state]
+    pages = open_pdf(Path(pdf_path))
+    # Scope italic-as-addition to the operative section: suppress until the
+    # enacting clause (which may sit on page 2, e.g. CA after a multi-page
+    # digest). Only scope if the document actually has an enacting clause; if it
+    # has none (unexpected for a real bill), start operative so no genuine
+    # addition is hidden.
+    doc_text = "".join(c.text for g in pages for c in g.chars)
+    operative = not has_enacting_clause(doc_text)
     # Reflow per page: lines_of sorts spans by `top`, but `top` resets each page,
     # so pooling pages before reflow would interleave reading order (and float
     # each page's top-of-page header to the document front). Grouping per page
     # and concatenating in page order preserves reading order.
     paras: list = []
-    operative = False  # True once the enacting clause is passed
-    for page_index, geo in enumerate(open_pdf(Path(pdf_path))):
+    for geo in pages:
         # align fractions FIRST, on the raw stream order (later passes re-cluster
         # chars by line, which would split a slash from its denominator digit).
         geo = align_fraction_digits(geo)
@@ -43,11 +50,6 @@ def convert(pdf_path: str, state: str) -> str:
         spans = extract_page_spans(geo)
         # Suppress italic-as-addition in the front matter / enacting clause.
         spans, operative = suppress_preamble_additions(spans, operative)
-        # Fail-safe: the enacting clause always sits on the first page; if it was
-        # not matched there, force operative from page 2 on so real additions on
-        # later pages are never suppressed.
-        if page_index == 0:
-            operative = True
         paras.extend(paragraphs(spans, profile))
     rendered = [render_markup(p).strip() for p in paras]
     out = "\n\n".join(r for r in rendered if r)

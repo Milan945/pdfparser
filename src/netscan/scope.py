@@ -22,6 +22,13 @@ from netscan.types import Span
 _ENACTING = re.compile(r"be it enacted|do enact as follows", re.IGNORECASE)
 
 
+def has_enacting_clause(text: str) -> bool:
+    """True if the document text contains an enacting-clause marker. Callers use
+    this to decide whether to scope additions at all: if absent (unexpected for
+    a real bill), they should NOT suppress, to avoid hiding genuine additions."""
+    return bool(_ENACTING.search(text))
+
+
 def suppress_preamble_additions(spans: list[Span], started: bool) -> tuple[list[Span], bool]:
     """Clear the italic flag on spans until the enacting clause is seen.
 
