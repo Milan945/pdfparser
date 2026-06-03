@@ -48,7 +48,10 @@ def our_markup(pdf_path: str) -> str:
         geo = strip_running_headers(geo, profile)
         geo = uppercase_small_caps(geo)
         spans.extend(extract_page_spans(geo))
-    return render_markup(spans)
+    out = render_markup(spans)
+    if profile.em_dash_to_double_hyphen:
+        out = out.replace("—", "--")
+    return out
 
 
 def content_key(s: str) -> str:

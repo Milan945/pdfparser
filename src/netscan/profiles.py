@@ -10,6 +10,11 @@ header_re/footer_re are optional regexes: a line in the top/bottom margin band
 whose text matches is treated as a running header/footer and dropped. CA pages
 carry an alternating running head ("AB 351 — 2 —" / "— 3 — AB 351") and a footer
 print number ("99"). States without running heads leave these None (no-op).
+
+em_dash_to_double_hyphen matches Doctly's per-state convention: KS Doctly output
+renders the source em-dash (U+2014) as "--" (its gold has zero em-dashes), while
+CA Doctly keeps the em-dash. This is a benchmark-parity choice; note the KS
+source glyph IS a true em-dash, so "--" follows Doctly rather than the raw glyph.
 """
 from __future__ import annotations
 from dataclasses import dataclass
@@ -22,6 +27,7 @@ class StateProfile:
     gutter: str  # "ca_line_label" | "ks_line_numbers"
     header_re: Optional[str] = None
     footer_re: Optional[str] = None
+    em_dash_to_double_hyphen: bool = False
 
 
 PROFILES: dict[str, StateProfile] = {
@@ -38,5 +44,6 @@ PROFILES: dict[str, StateProfile] = {
         gutter="ks_line_numbers",
         # Running head on pages 2+: "HB 2206" / "SB 123" + page number, top band.
         header_re=r"^(?:HB|SB)\s+\d+\s*$",
+        em_dash_to_double_hyphen=True,
     ),
 }
