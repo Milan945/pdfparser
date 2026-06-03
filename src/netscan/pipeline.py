@@ -11,7 +11,12 @@ import tempfile
 from pathlib import Path
 
 from netscan.pdf_backend import open_pdf
-from netscan.structure import strip_gutter, strip_running_headers, uppercase_small_caps
+from netscan.structure import (
+    strip_gutter,
+    strip_running_headers,
+    uppercase_small_caps,
+    align_fraction_digits,
+)
 from netscan.geometry import extract_page_spans
 from netscan.profiles import PROFILES
 from netscan.reflow import paragraphs
@@ -29,6 +34,9 @@ def convert(pdf_path: str, state: str) -> str:
     paras: list = []
     operative = False  # True once the enacting clause is passed
     for page_index, geo in enumerate(open_pdf(Path(pdf_path))):
+        # align fractions FIRST, on the raw stream order (later passes re-cluster
+        # chars by line, which would split a slash from its denominator digit).
+        geo = align_fraction_digits(geo)
         geo = strip_gutter(geo, profile)
         geo = strip_running_headers(geo, profile)
         geo = uppercase_small_caps(geo)
