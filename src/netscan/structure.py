@@ -8,7 +8,7 @@ from __future__ import annotations
 import re
 from dataclasses import replace
 
-from netscan.geometry import SAME_LINE_TOL
+from netscan.geometry import SAME_LINE_TOL, is_small_caps_font
 from netscan.pdf_backend import Char, PageGeometry
 from netscan.profiles import StateProfile
 
@@ -108,3 +108,17 @@ def strip_running_headers(geo: PageGeometry, profile: StateProfile) -> PageGeome
             continue
         kept.extend(line)
     return replace(geo, chars=kept)
+
+
+def uppercase_small_caps(geo: PageGeometry) -> PageGeometry:
+    """Uppercase the text of chars set in a small-caps font.
+
+    Small-caps fonts render lowercase letters as small capitals; the source's
+    visual form (and Doctly's output) is uppercase, but extraction yields the
+    lowercase code points. Uppercasing those chars restores the visual form.
+    No-op for documents without small-caps fonts (e.g. KS bills use Times)."""
+    if not any(is_small_caps_font(c.fontname) for c in geo.chars):
+        return geo
+    chars = [replace(c, text=c.text.upper()) if is_small_caps_font(c.fontname) else c
+             for c in geo.chars]
+    return replace(geo, chars=chars)

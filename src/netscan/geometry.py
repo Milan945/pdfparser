@@ -12,6 +12,7 @@ from netscan.types import Span
 
 _BOLD_TOKENS = ("bold", "black", "heavy")
 _ITALIC_TOKENS = ("italic", "oblique")
+_SMALL_CAPS_TOKENS = ("smallcap", "petite")
 
 
 def is_bold_font(fontname: str) -> bool:
@@ -22,6 +23,16 @@ def is_bold_font(fontname: str) -> bool:
 def is_italic_font(fontname: str) -> bool:
     name = fontname.lower()
     return any(tok in name for tok in _ITALIC_TOKENS)
+
+
+def is_small_caps_font(fontname: str) -> bool:
+    """True for small-caps fonts (e.g. 'GFEDCB+MinionPC'), whose lowercase text
+    is rendered as small capitals and should be uppercased to match the source's
+    visual form. Detected by the conventional SC/PC suffix or a small-caps token,
+    on the font name after any subset prefix."""
+    name = fontname.split("+")[-1]
+    low = name.lower()
+    return name.endswith(("SC", "PC")) or any(tok in low for tok in _SMALL_CAPS_TOKENS)
 
 
 # bands as fractions of glyph height, measured from `top`.

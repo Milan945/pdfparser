@@ -36,7 +36,7 @@ def _state_for(pdf_path: str) -> str:
 
 
 def our_markup(pdf_path: str) -> str:
-    from netscan.structure import strip_gutter, strip_running_headers
+    from netscan.structure import strip_gutter, strip_running_headers, uppercase_small_caps
     from netscan.profiles import PROFILES
     from netscan.emit import render_markup
     profile = PROFILES[_state_for(pdf_path)]
@@ -44,6 +44,7 @@ def our_markup(pdf_path: str) -> str:
     for geo in open_pdf(Path(pdf_path)):
         geo = strip_gutter(geo, profile)
         geo = strip_running_headers(geo, profile)
+        geo = uppercase_small_caps(geo)
         spans.extend(extract_page_spans(geo))
     return render_markup(spans)
 
