@@ -127,8 +127,10 @@ def test_zero_width_ligature_keeps_stream_order():
     def c(t, x0, x1):
         return Char(text=t, x0=x0, x1=x1, top=100.0, bottom=110.0,
                     fontname="Times-Roman", size=10)
-    # stream order is correct: f-i(ligature), v, e
-    chars = [c("fi", 94.63, 94.63), c("v", 94.56, 100.56), c("e", 106.97, 112.30)]
+    # Real stream order: 'v' is drawn BEFORE the zero-width 'fi' ligature (whose
+    # x0 collapses onto v). A stream-order tiebreak alone gives "vfie"; only the
+    # left-bias on the zero-width glyph produces "five".
+    chars = [c("v", 94.56, 100.56), c("fi", 94.63, 94.63), c("e", 106.97, 112.30)]
     geo = PageGeometry(width=612, height=792, chars=chars, rule_lines=[], image_count=0)
     spans = _eps(geo)
     assert "".join(s.text for s in spans) == "five"

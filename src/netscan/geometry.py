@@ -104,7 +104,11 @@ def extract_page_spans(geo: PageGeometry) -> list[Span]:
             lines.append((ch.top, [ch]))
 
     def line_order_key(c: Char):
-        return (round(c.x0 / X_ORDER_QUANTUM), stream_index[id(c)])
+        # Zero-width ligature glyphs (x1 <= x0) report their pen-advance x, which
+        # collapses onto the following glyph; bias them one quantum left so they
+        # order at their true visual origin. Ties break by content-stream order.
+        x = c.x0 - X_ORDER_QUANTUM if c.x1 <= c.x0 else c.x0
+        return (round(x / X_ORDER_QUANTUM), stream_index[id(c)])
 
     spans: list[Span] = []
     for _, line_chars in lines:
