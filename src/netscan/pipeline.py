@@ -50,7 +50,10 @@ def convert(pdf_path: str, state: str) -> str:
             operative = True
         paras.extend(paragraphs(spans, profile))
     rendered = [render_markup(p).strip() for p in paras]
-    return "\n\n".join(r for r in rendered if r)
+    out = "\n\n".join(r for r in rendered if r)
+    if profile.em_dash_to_double_hyphen:
+        out = out.replace("—", "--")
+    return out
 
 
 def convert_bytes(data: bytes, state: str) -> str:
