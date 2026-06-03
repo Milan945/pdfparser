@@ -53,8 +53,9 @@ def test_header_pattern_not_matched_in_body_band_is_kept():
 def test_profile_without_patterns_is_noop():
     chars = _line("AB 351 — 2 —", top=43)
     geo = _geo(chars)
-    out = strip_running_headers(geo, PROFILES["KS"])
-    assert out is geo  # KS has no header/footer patterns: returned unchanged
+    bare = StateProfile(name="X", gutter="ks_line_numbers")  # no header/footer res
+    out = strip_running_headers(geo, bare)
+    assert out is geo  # no patterns: returned unchanged (same object)
     assert "AB 351" in "".join(c.text for c in out.chars)
 
 
@@ -68,3 +69,21 @@ def test_real_ca_pipeline_has_no_header_footer_artifacts():
     assert "AB 351 —" not in out
     # the footer print-number 99 no longer bleeds into the digest sentence
     assert "in the    99" not in out and "in the 99" not in out
+
+
+def test_ks_running_header_pattern_dropped():
+    chars = _line("HB 2206 ", top=59, x0=78) + _line("body of the bill text", top=88)
+    out = strip_running_headers(_geo(chars, height=648.0), PROFILES["KS"])
+    text = "".join(c.text for c in out.chars)
+    assert "HB 2206" not in text
+    assert "body of the bill text" in text
+
+
+_KS = Path("samples/there samples/2025_2026_16_2_2_002206_0_4_1_20250203_0.pdf")
+
+
+@pytest.mark.skipif(not _KS.exists(), reason="KS sample bill not present")
+def test_real_ks_pipeline_strips_running_header():
+    from netscan.pipeline import convert
+    out = convert(str(_KS), "KS")
+    assert "HB 2206" not in out  # running head removed (title "HOUSE BILL No. 2206" differs)

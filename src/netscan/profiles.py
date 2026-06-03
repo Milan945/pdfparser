@@ -33,5 +33,10 @@ PROFILES: dict[str, StateProfile] = {
         header_re=r"^\s*(?:AB|SB)?\s*\d*\s*—\s*\d+\s*—\s*(?:AB|SB)?\s*\d*\s*$",
         footer_re=r"^\s*\d{1,4}\s*$",   # lone print/page number, e.g. "99"
     ),
-    "KS": StateProfile(name="KS", gutter="ks_line_numbers"),
+    "KS": StateProfile(
+        name="KS",
+        gutter="ks_line_numbers",
+        # Running head on pages 2+: "HB 2206" / "SB 123" + page number, top band.
+        header_re=r"^(?:HB|SB)\s+\d+\s*$",
+    ),
 }
