@@ -110,6 +110,32 @@ def strip_running_headers(geo: PageGeometry, profile: StateProfile) -> PageGeome
     return replace(geo, chars=kept)
 
 
+_FRACTION_SLASH = "⁄"
+
+
+def align_fraction_digits(geo: PageGeometry) -> PageGeometry:
+    """Snap the numerator/denominator digits of a staggered fraction onto the
+    fraction slash's line.
+
+    A fraction like "2/3" is typeset as a raised numerator, a full-height
+    fraction slash (U+2044), and a lowered denominator. The denominator's `top`
+    can fall outside SAME_LINE_TOL, so line clustering would banish it to another
+    line (producing "2/" here and a stray "3" elsewhere). Re-stamping the digits
+    immediately adjacent to a slash with the slash's vertical extent keeps the
+    fraction intact. Only chars flanking a U+2044 are touched."""
+    chars = list(geo.chars)
+    if not any(c.text == _FRACTION_SLASH for c in chars):
+        return geo
+    for i, c in enumerate(chars):
+        if c.text != _FRACTION_SLASH:
+            continue
+        if i > 0 and chars[i - 1].text.isdigit():
+            chars[i - 1] = replace(chars[i - 1], top=c.top, bottom=c.bottom)
+        if i + 1 < len(chars) and chars[i + 1].text.isdigit():
+            chars[i + 1] = replace(chars[i + 1], top=c.top, bottom=c.bottom)
+    return replace(geo, chars=chars)
+
+
 def uppercase_small_caps(geo: PageGeometry) -> PageGeometry:
     """Uppercase the text of chars set in a small-caps font.
 
