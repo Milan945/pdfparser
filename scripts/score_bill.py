@@ -88,6 +88,12 @@ def score_pair(name: str, pdf_path: str, gold_path: str) -> None:
     content_ratio = difflib.SequenceMatcher(None, ck_o, ck_g).ratio()
     tk_o, tk_g = tagged_key(ours), tagged_key(gold)
     tagged_ratio = difflib.SequenceMatcher(None, tk_o, tk_g).ratio()
+    # full pipeline output (with reflow) vs gold, whitespace-collapsed
+    from netscan.pipeline import convert
+    state = _state_for(pdf_path)
+    full = convert(pdf_path, state)
+    fk_o = re.sub(r"\s+", " ", full).strip()
+    full_ratio = difflib.SequenceMatcher(None, fk_o, tk_g).ratio()
     od, oa = tag_inventory(ours)
     gd, ga = tag_inventory(gold)
     d_match, a_match = _multiset_overlap(od, gd), _multiset_overlap(oa, ga)
@@ -95,6 +101,7 @@ def score_pair(name: str, pdf_path: str, gold_path: str) -> None:
     print(f"  content  chars ours={len(ck_o)} gold={len(ck_g)} "
           f"identical={ck_o == ck_g} similarity={content_ratio:.4f}")
     print(f"  tagged   similarity={tagged_ratio:.4f} (content+tags, reflow-normalized)")
+    print(f"  fulltext similarity={full_ratio:.4f} (pipeline reflow output vs gold)")
     print(f"  tags     ours D={len(od)} A={len(oa)} | gold D={len(gd)} A={len(ga)} | "
           f"exact-match D={d_match}/{len(gd)} A={a_match}/{len(ga)}")
 
