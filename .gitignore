@@ -8,3 +8,4 @@ samples/
 dist/
 .eggs/
 *.egg
+.worktrees/
