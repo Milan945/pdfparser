@@ -67,6 +67,10 @@ def line_decoration(ch: Char, rules: list[RuleLine]) -> Optional[str]:
 
 
 SAME_LINE_TOL = 3.0  # pts; chars whose tops differ by less are on one line
+X_ORDER_QUANTUM = 1.0  # pts; within a line, x0 is bucketed to this granularity
+#                        so sub-quantum overlaps (zero-width ligature glyphs whose
+#                        x0 collapses onto a neighbor) fall back to content-stream
+#                        order instead of scrambling. Normal glyphs are ~6pt apart.
 
 
 def _char_format(ch: Char, rules: list[RuleLine]) -> tuple[bool, bool, bool, bool]:
@@ -83,10 +87,14 @@ def extract_page_spans(geo: PageGeometry) -> list[Span]:
     """Assemble chars into Spans in reading order (top-to-bottom, left-to-right).
 
     Chars are first clustered into lines by vertical proximity (within
-    SAME_LINE_TOL of the line's first char), then each line is sorted by x0 and
+    SAME_LINE_TOL of the line's first char), then each line is ordered by x0
+    bucketed to X_ORDER_QUANTUM (ties broken by content-stream order) and
     consecutive same-format chars are merged into one Span. Clustering before
-    sorting prevents a line whose tops straddle a bucket boundary from scrambling.
+    ordering prevents a line whose tops straddle a bucket boundary from
+    scrambling; bucketing x0 prevents a zero-width ligature glyph (whose x0
+    collapses onto its neighbor) from reordering with that neighbor.
     """
+    stream_index = {id(c): i for i, c in enumerate(geo.chars)}
     ordered = sorted(geo.chars, key=lambda c: (c.top, c.x0))
     lines: list[tuple[float, list[Char]]] = []
     for ch in ordered:
@@ -95,11 +103,21 @@ def extract_page_spans(geo: PageGeometry) -> list[Span]:
         else:
             lines.append((ch.top, [ch]))
 
+    def line_order_key(c: Char):
+        # Zero-width glyphs (x1 <= x0) -- chiefly ligatures, but also NBSP/zero-
+        # width spaces -- report their pen-advance x, which collapses onto the
+        # following glyph; bias them one quantum left so they order at their true
+        # visual origin. Ties break by content-stream order. The 1pt bias is far
+        # smaller than real glyph spacing (~6pt), so only the collapsed neighbour
+        # is ever reordered, never a legitimate preceding glyph.
+        x = c.x0 - X_ORDER_QUANTUM if c.x1 <= c.x0 else c.x0
+        return (round(x / X_ORDER_QUANTUM), stream_index[id(c)])
+
     spans: list[Span] = []
     for _, line_chars in lines:
         cur: Span | None = None
         cur_fmt: tuple | None = None
-        for ch in sorted(line_chars, key=lambda c: c.x0):
+        for ch in sorted(line_chars, key=line_order_key):
             fmt = _char_format(ch, geo.rule_lines)
             if cur is not None and fmt == cur_fmt:
                 cur.text += ch.text
