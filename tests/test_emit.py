@@ -28,10 +28,18 @@ def test_leading_and_trailing_whitespace_sits_outside_tag():
     assert render_markup(spans) == " [A>public disclosure<A] "
 
 
-def test_whitespace_only_decorated_span_is_not_tagged():
+def test_trailing_whitespace_in_merged_run_stays_outside_tag():
+    # the trailing-space italic span merges into "a"; the space lands outside.
     spans = [_span("a", italic=True), _span(" ", italic=True), _span("b")]
-    # the lone whitespace italic span must not become an empty [A><A]
     assert render_markup(spans) == "[A>a<A] b"
+
+
+def test_whitespace_only_run_of_distinct_decoration_is_not_tagged():
+    # A whitespace-only run of a DIFFERENT decoration, sandwiched between two
+    # same-decoration runs, is the only path that reaches the empty-core guard.
+    # It must render as plain whitespace, never an empty [D><D].
+    spans = [_span("a", italic=True), _span(" ", struck=True), _span("b", italic=True)]
+    assert render_markup(spans) == "[A>a<A] [A>b<A]"
 
 
 def test_interleaved_delete_add_do_not_merge():
