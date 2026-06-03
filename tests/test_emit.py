@@ -43,8 +43,10 @@ def test_whitespace_only_run_of_distinct_decoration_is_not_tagged():
 
 
 def test_interleaved_delete_add_do_not_merge():
+    # different decorations never merge; adjacent end/start tags get a separating
+    # space (Doctly's convention for a struck item directly before its addition).
     spans = [_span("old", struck=True), _span("new", italic=True)]
-    assert render_markup(spans) == "[D>old<D][A>new<A]"
+    assert render_markup(spans) == "[D>old<D] [A>new<A]"
 
 
 def test_normalization_is_applied_to_tag_text():
