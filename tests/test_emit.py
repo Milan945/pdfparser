@@ -42,3 +42,27 @@ def test_interleaved_delete_add_do_not_merge():
 def test_normalization_is_applied_to_tag_text():
     spans = [_span("party’s", italic=True)]   # curly apostrophe
     assert render_markup(spans) == "[A>party's<A]"
+
+
+from pathlib import Path
+import pytest
+from netscan.pdf_backend import open_pdf
+from netscan.geometry import extract_page_spans
+from netscan.structure import strip_gutter
+from netscan.profiles import PROFILES
+
+_KS = Path("samples/there samples/2025_2026_16_2_2_002206_0_4_1_20250203_0.pdf")
+
+
+@pytest.mark.skipif(not _KS.exists(), reason="KS sample bill not present")
+def test_ks_merge_collapses_tag_count():
+    spans = []
+    for geo in open_pdf(_KS):
+        geo = strip_gutter(geo, PROFILES["KS"])
+        spans.extend(extract_page_spans(geo))
+    out = render_markup(spans)
+    # merged output has far fewer addition tags than the unmerged 234
+    assert out.count("[A>") < 150
+    # tags must not wrap leading spaces (whitespace stays outside)
+    assert "[A> " not in out and "[D> " not in out
+    assert " <A]" not in out and " <D]" not in out
