@@ -88,6 +88,32 @@ def _multiset_overlap(a: list[str], b: list[str]) -> int:
     return sum((ca & cb).values())
 
 
+def label_states(s: str) -> list[tuple[str, str]]:
+    """Per (non-whitespace) content character, its amendment label: 'D'
+    (deletion), 'A' (addition), or '' (plain). Independent of how tags are
+    grouped, so '[A>x<A] [A>y<A]' and '[A>x y<A]' yield the same labels."""
+    out: list[tuple[str, str]] = []
+    mode = ""
+    for tok in re.split(r"(\[D>|<D\]|\[A>|<A\])", s):
+        if tok == "[D>":
+            mode = "D"
+        elif tok == "[A>":
+            mode = "A"
+        elif tok in ("<D]", "<A]"):
+            mode = ""
+        else:
+            out.extend((ch, mode) for ch in tok if not ch.isspace())
+    return out
+
+
+def label_agreement(ours: str, gold: str) -> float:
+    """Per-character agreement on the deletion/addition/plain label. This is the
+    accuracy that matters for ingestion: is each character correctly flagged as
+    amended? It does NOT penalise Doctly's tag-GROUPING style (one tag vs two
+    adjacent), only genuine mislabeling."""
+    return difflib.SequenceMatcher(None, label_states(ours), label_states(gold)).ratio()
+
+
 def score_pair(name: str, pdf_path: str, gold_path: str) -> None:
     ours = our_markup(pdf_path)
     gold = Path(gold_path).read_text(encoding="utf-8")
@@ -104,11 +130,14 @@ def score_pair(name: str, pdf_path: str, gold_path: str) -> None:
     od, oa = tag_inventory(ours)
     gd, ga = tag_inventory(gold)
     d_match, a_match = _multiset_overlap(od, gd), _multiset_overlap(oa, ga)
+    label_ratio = label_agreement(full, gold)
     print(f"{name}:")
+    print(f"  LABELING per-char deletion/addition accuracy={label_ratio:.5f}  <- the metric that matters")
     print(f"  content  chars ours={len(ck_o)} gold={len(ck_g)} "
           f"identical={ck_o == ck_g} similarity={content_ratio:.4f}")
     print(f"  tagged   similarity={tagged_ratio:.4f} (content+tags, reflow-normalized)")
-    print(f"  fulltext similarity={full_ratio:.4f} (pipeline reflow output vs gold)")
+    print(f"  fulltext similarity={full_ratio:.4f} (pipeline reflow output vs gold; "
+          f"penalises Doctly's tag-grouping style, not labeling)")
     print(f"  tags     ours D={len(od)} A={len(oa)} | gold D={len(gd)} A={len(ga)} | "
           f"exact-match D={d_match}/{len(gd)} A={a_match}/{len(ga)}")
 
