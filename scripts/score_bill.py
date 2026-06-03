@@ -54,20 +54,55 @@ def our_markup(pdf_path: str) -> str:
 
 
 def content_key(s: str) -> str:
-    """Tag-stripped, whitespace-free content key (the round-trip invariant)."""
+    """Tag-stripped, whitespace-free content key (the round-trip invariant).
+
+    Measures CONTENT fidelity only: are the same words present, ignoring tags
+    and all whitespace/reflow.
+    """
     return re.sub(r"\s+", "", _TAG_RE.sub("", s))
+
+
+def tagged_key(s: str) -> str:
+    """Whitespace collapsed to single spaces, tags KEPT.
+
+    Measures content + tag placement + tag-boundary spacing, normalizing away
+    reflow (newlines/paragraphs). This is the metric closest to byte-parity with
+    Doctly once reflow is excluded; it is lowered by tag fragmentation and by
+    spaces sitting inside vs outside tags, which the tag-merge slice targets.
+    """
+    return re.sub(r"\s+", " ", s).strip()
+
+
+def tag_inventory(s: str) -> tuple[list[str], list[str]]:
+    """Return (deletions, additions) inner texts, each whitespace-normalized."""
+    dels = [re.sub(r"\s+", " ", t).strip() for t in re.findall(r"\[D>(.*?)<D\]", s, re.S)]
+    adds = [re.sub(r"\s+", " ", t).strip() for t in re.findall(r"\[A>(.*?)<A\]", s, re.S)]
+    return dels, adds
+
+
+def _multiset_overlap(a: list[str], b: list[str]) -> int:
+    """Count of exact-match items shared between two lists (as multisets)."""
+    from collections import Counter
+    ca, cb = Counter(a), Counter(b)
+    return sum((ca & cb).values())
 
 
 def score_pair(name: str, pdf_path: str, gold_path: str) -> None:
     ours = our_markup(pdf_path)
     gold = Path(gold_path).read_text(encoding="utf-8")
     ck_o, ck_g = content_key(ours), content_key(gold)
-    ratio = difflib.SequenceMatcher(None, ck_o, ck_g).ratio()
+    content_ratio = difflib.SequenceMatcher(None, ck_o, ck_g).ratio()
+    tk_o, tk_g = tagged_key(ours), tagged_key(gold)
+    tagged_ratio = difflib.SequenceMatcher(None, tk_o, tk_g).ratio()
+    od, oa = tag_inventory(ours)
+    gd, ga = tag_inventory(gold)
+    d_match, a_match = _multiset_overlap(od, gd), _multiset_overlap(oa, ga)
     print(f"{name}:")
-    print(f"  content chars  ours={len(ck_o)} gold={len(ck_g)} "
-          f"identical={ck_o == ck_g} char_similarity={ratio:.4f}")
-    print(f"  tags  ours D={ours.count('[D>')} A={ours.count('[A>')} | "
-          f"gold D={gold.count('[D>')} A={gold.count('[A>')}")
+    print(f"  content  chars ours={len(ck_o)} gold={len(ck_g)} "
+          f"identical={ck_o == ck_g} similarity={content_ratio:.4f}")
+    print(f"  tagged   similarity={tagged_ratio:.4f} (content+tags, reflow-normalized)")
+    print(f"  tags     ours D={len(od)} A={len(oa)} | gold D={len(gd)} A={len(ga)} | "
+          f"exact-match D={d_match}/{len(gd)} A={a_match}/{len(ga)}")
 
 
 def discover_pairs() -> list[tuple[str, str, str]]:
