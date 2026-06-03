@@ -11,7 +11,7 @@ import tempfile
 from pathlib import Path
 
 from netscan.pdf_backend import open_pdf
-from netscan.structure import strip_gutter
+from netscan.structure import strip_gutter, strip_running_headers
 from netscan.geometry import extract_page_spans
 from netscan.profiles import PROFILES
 from netscan.reflow import paragraphs
@@ -30,6 +30,7 @@ def convert(pdf_path: str, state: str) -> str:
     operative = False  # True once the enacting clause is passed
     for page_index, geo in enumerate(open_pdf(Path(pdf_path))):
         geo = strip_gutter(geo, profile)
+        geo = strip_running_headers(geo, profile)
         spans = extract_page_spans(geo)
         # Suppress italic-as-addition in the front matter / enacting clause.
         spans, operative = suppress_preamble_additions(spans, operative)

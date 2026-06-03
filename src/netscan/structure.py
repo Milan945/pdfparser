@@ -76,3 +76,35 @@ def strip_gutter(geo: PageGeometry, profile: StateProfile) -> PageGeometry:
     else:
         kept = list(geo.chars)
     return replace(geo, chars=kept)
+
+
+# Running header/footer margin bands (pts). A line is a header candidate only if
+# it sits within HEADER_BAND of the page top, a footer candidate only if within
+# FOOTER_BAND of the page bottom. Bands are tight enough to exclude body text
+# (CA body starts ~68pt from top and ends well above the ~612pt footer line).
+HEADER_BAND = 60.0
+FOOTER_BAND = 185.0
+
+
+def strip_running_headers(geo: PageGeometry, profile: StateProfile) -> PageGeometry:
+    """Return a copy of geo with running header/footer lines removed.
+
+    A line is dropped only if it BOTH sits in the top/bottom margin band AND its
+    text matches the profile's header_re/footer_re. The pattern gate keeps body
+    text that happens to be near a margin. No-op when the profile has no patterns.
+    """
+    if not profile.header_re and not profile.footer_re:
+        return geo
+    header = re.compile(profile.header_re) if profile.header_re else None
+    footer = re.compile(profile.footer_re) if profile.footer_re else None
+    bottom_edge = geo.height - FOOTER_BAND
+    kept: list[Char] = []
+    for line in line_clusters(geo.chars):
+        top = line[0].top
+        text = "".join(c.text for c in line)
+        if header and top < HEADER_BAND and header.match(text):
+            continue
+        if footer and top > bottom_edge and footer.match(text):
+            continue
+        kept.extend(line)
+    return replace(geo, chars=kept)

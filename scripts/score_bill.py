@@ -36,13 +36,14 @@ def _state_for(pdf_path: str) -> str:
 
 
 def our_markup(pdf_path: str) -> str:
-    from netscan.structure import strip_gutter
+    from netscan.structure import strip_gutter, strip_running_headers
     from netscan.profiles import PROFILES
     from netscan.emit import render_markup
     profile = PROFILES[_state_for(pdf_path)]
     spans = []
     for geo in open_pdf(Path(pdf_path)):
         geo = strip_gutter(geo, profile)
+        geo = strip_running_headers(geo, profile)
         spans.extend(extract_page_spans(geo))
     return render_markup(spans)
 
