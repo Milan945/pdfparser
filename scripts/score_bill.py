@@ -38,19 +38,13 @@ def _state_for(pdf_path: str) -> str:
 def our_markup(pdf_path: str) -> str:
     from netscan.structure import strip_gutter
     from netscan.profiles import PROFILES
-    from netscan.normalize import normalize_unicode
+    from netscan.emit import render_markup
     profile = PROFILES[_state_for(pdf_path)]
-    out: list[str] = []
+    spans = []
     for geo in open_pdf(Path(pdf_path)):
         geo = strip_gutter(geo, profile)
-        for s in extract_page_spans(geo):
-            t = normalize_unicode(s.text)
-            if s.struck:
-                t = f"[D>{t}<D]"
-            elif s.italic:
-                t = f"[A>{t}<A]"
-            out.append(t)
-    return "".join(out)
+        spans.extend(extract_page_spans(geo))
+    return render_markup(spans)
 
 
 def content_key(s: str) -> str:
