@@ -34,6 +34,19 @@ streamlit run app.py
 ```
 Upload a PDF, select the state, download the output `.txt`.
 
+**Three-panel UI (React + FastAPI)**
+```bash
+# Terminal 1 — backend
+pip install -e ".[api]"
+uvicorn api.main:app --reload
+
+# Terminal 2 — frontend
+cd frontend
+npm install
+npm run dev
+```
+Open `http://localhost:5173`. Upload a PDF, review the three-panel output, download either version.
+
 **CLI**
 ```bash
 python -m netscan.pipeline bill.pdf CA          # stdout
