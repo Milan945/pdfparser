@@ -104,9 +104,12 @@ def extract_page_spans(geo: PageGeometry) -> list[Span]:
             lines.append((ch.top, [ch]))
 
     def line_order_key(c: Char):
-        # Zero-width ligature glyphs (x1 <= x0) report their pen-advance x, which
-        # collapses onto the following glyph; bias them one quantum left so they
-        # order at their true visual origin. Ties break by content-stream order.
+        # Zero-width glyphs (x1 <= x0) -- chiefly ligatures, but also NBSP/zero-
+        # width spaces -- report their pen-advance x, which collapses onto the
+        # following glyph; bias them one quantum left so they order at their true
+        # visual origin. Ties break by content-stream order. The 1pt bias is far
+        # smaller than real glyph spacing (~6pt), so only the collapsed neighbour
+        # is ever reordered, never a legitimate preceding glyph.
         x = c.x0 - X_ORDER_QUANTUM if c.x1 <= c.x0 else c.x0
         return (round(x / X_ORDER_QUANTUM), stream_index[id(c)])
 
