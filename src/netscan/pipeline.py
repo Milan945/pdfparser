@@ -16,6 +16,7 @@ from netscan.geometry import extract_page_spans
 from netscan.profiles import PROFILES
 from netscan.reflow import paragraphs
 from netscan.emit import render_markup
+from netscan.scope import suppress_preamble_additions
 
 
 def convert(pdf_path: str, state: str) -> str:
@@ -26,9 +27,17 @@ def convert(pdf_path: str, state: str) -> str:
     # each page's top-of-page header to the document front). Grouping per page
     # and concatenating in page order preserves reading order.
     paras: list = []
-    for geo in open_pdf(Path(pdf_path)):
+    operative = False  # True once the enacting clause is passed
+    for page_index, geo in enumerate(open_pdf(Path(pdf_path))):
         geo = strip_gutter(geo, profile)
         spans = extract_page_spans(geo)
+        # Suppress italic-as-addition in the front matter / enacting clause.
+        spans, operative = suppress_preamble_additions(spans, operative)
+        # Fail-safe: the enacting clause always sits on the first page; if it was
+        # not matched there, force operative from page 2 on so real additions on
+        # later pages are never suppressed.
+        if page_index == 0:
+            operative = True
         paras.extend(paragraphs(spans, profile))
     rendered = [render_markup(p).strip() for p in paras]
     return "\n\n".join(r for r in rendered if r)
