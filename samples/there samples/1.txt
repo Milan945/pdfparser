@@ -1,0 +1,272 @@
+Session of 2025
+
+HOUSE BILL No. 2218
+
+By Committee on Health and Human Services
+
+Requested by Steve Kearney on behalf of Compass Pathways
+
+2-3
+
+AN ACT concerning the uniform controlled substances act; defining psilocybin to exclude the pharmaceutical composition of crystalline polymorph psilocybin; adding crystalline polymorph psilocybin to schedule IV; amending K.S.A. 2024 Supp. 65-4101 and 65-4111 and repealing the existing sections.
+
+Be it enacted by the Legislature of the State of Kansas:
+
+Section 1. On and after the date of publication in the Kansas register of the certification prescribed in section 3, K.S.A. 2024 Supp. 65-4101 is hereby amended to read as follows:
+
+65-4101. As used in this act:
+
+(a) "Administer" means the direct application of a controlled substance, whether by injection, inhalation, ingestion or any other means, to the body of a patient or research subject by:
+
+(1) A practitioner or pursuant to the lawful direction of a practitioner; or
+
+(2) the patient or research subject at the direction and in the presence of[D> the<D] [A>a<A] practitioner.
+
+(b) "Agent" means an authorized person who acts on behalf of or at the direction of a manufacturer, distributor or dispenser. "Agent" does not include a common carrier, public warehouseman or employee of the carrier or warehouseman.
+
+(c) "Application service provider" means an entity that sells electronic prescription or pharmacy prescription applications as a hosted service where the entity controls access to the application and maintains the software and records on its server.
+
+(d) "Board" means the state board of pharmacy.
+
+(e) "Bureau" means the bureau of narcotics and dangerous drugs[D>,<D] [A>of the<A] United States department of justice, or its successor agency.
+
+(f) "Controlled substance" means any drug, substance or immediate precursor included in any of the schedules designated in K.S.A. 65-4105, 65-4107, 65-4109, 65-4111 and 65-4113, and amendments thereto.
+
+(g) (1) "Controlled substance analog" means a substance that is intended for human consumption[D>,<D] and at least one of the following:
+
+(A) The chemical structure of the substance is substantially similar to the chemical structure of a controlled substance listed in or added to the schedules designated in K.S.A. 65-4105 or 65-4107, and amendments thereto;
+
+(B) the substance has a stimulant, depressant or hallucinogenic effect on the central nervous system substantially similar to the stimulant, depressant or hallucinogenic effect on the central nervous system of a controlled substance included in the schedules designated in K.S.A. 65-4105 or 65-4107, and amendments thereto; or
+
+(C) with respect to a particular individual, such individual represents or intends the substance to have a stimulant, depressant or hallucinogenic effect on the central nervous system substantially similar to the stimulant, depressant or hallucinogenic effect on the central nervous system of a controlled substance included in the schedules designated in K.S.A. 65-4105 or 65-4107, and amendments thereto.
+
+(2) "Controlled substance analog" does not include:
+
+(A) A controlled substance;
+
+(B) a substance for which there is an approved new drug application; or
+
+(C) a substance with respect to which an exemption is in effect for investigational use by a particular person under section 505 of the federal food, drug and cosmetic act, 21 U.S.C. § 355, to the extent conduct with respect to the substance is permitted by the exemption.
+
+(h) "Counterfeit substance" means a controlled substance that, or the container or labeling of which, without authorization bears the trademark, trade name or other identifying mark, imprint, number or device or any likeness thereof of a manufacturer, distributor or dispenser other than the person who in fact manufactured, distributed or dispensed the substance.
+
+(i) "Cultivate" means the planting or promotion of growth of five or more plants that contain or can produce controlled substances.
+
+(j) "DEA" means the U.S. department of justice, drug enforcement administration.
+
+(k) "Deliver" or "delivery" means the actual, constructive or attempted transfer from one person to another of a controlled substance, whether or not there is an agency relationship.
+
+(l) "Dispense" means to deliver a controlled substance to an ultimate user or research subject by or pursuant to the lawful order of a practitioner, including the packaging, labeling or compounding necessary to prepare the substance for that delivery, or pursuant to the prescription of a mid-level practitioner.
+
+(m) "Dispenser" means a practitioner or pharmacist who dispenses, or a physician assistant who has authority to dispense prescription-only drugs in accordance with K.S.A. 65-28a08(b), and amendments thereto.
+
+(n) "Distribute" means to deliver other than by administering or dispensing a controlled substance.
+
+(o) "Distributor" means a person who distributes.
+
+(p) (1) "Drug" means substances:
+
+(A) Recognized as drugs in the official United States pharmacopeia, official homeopathic pharmacopoeia of the United States or official national formulary or any supplement to any of them;
+
+(B) intended for use in the diagnosis, cure, mitigation, treatment or prevention of disease in human or animals;
+
+(C) other than food intended to affect the structure or any function of the body of human or animals; and
+
+(D) intended for use as a component of any article specified in subparagraph (A), (B) or (C).
+
+(2) "Drug" does not include devices or their components, parts or accessories.
+
+(q) "Immediate precursor" means a substance that the board has found to be and by rule and regulation designates as being the principal compound commonly used or produced primarily for use and that is an immediate chemical intermediary used or likely to be used in the manufacture of a controlled substance, the control of which is necessary to prevent, curtail or limit manufacture.
+
+(r) "Electronic prescription" means an electronically prepared prescription that is authorized and transmitted from the prescriber to the pharmacy by means of electronic transmission.
+
+(s) "Electronic prescription application" means software that is used to create electronic prescriptions and that is intended to be installed on the prescriber's computers and servers where access and records are controlled by the prescriber.
+
+(t) "Electronic signature" means a confidential personalized digital key, code, number or other method for secure electronic data transmissions that identifies a particular person as the source of the message, authenticates the signatory of the message and indicates the person's approval of the information contained in the transmission.
+
+(u) "Electronic transmission" means the transmission of an electronic prescription, formatted as an electronic data file, from a prescriber's electronic prescription application to a pharmacy's computer, where the data file is imported into the pharmacy prescription application.
+
+(v) "Electronically prepared prescription" means a prescription that is generated using an electronic prescription application.
+
+(w) "Facsimile transmission" or "fax transmission" means the transmission of a digital image of a prescription from the prescriber or the prescriber's agent to the pharmacy. "Facsimile transmission" includes, but is not limited to, transmission of a written prescription between the prescriber's fax machine and the pharmacy's fax machine[D>;<D][A>,<A] transmission of an electronically prepared prescription from the prescriber's electronic prescription application to the pharmacy's fax machine, computer or printer[D>;<D] or transmission of an electronically prepared prescription from the prescriber's fax machine to the pharmacy's fax machine, computer or printer.
+
+(x) "Intermediary" means any technology system that receives and transmits an electronic prescription between the prescriber and the pharmacy.
+
+(y) "Isomer" means all enantiomers and diastereomers.
+
+(z) "Manufacture" means the production, preparation, propagation, compounding, conversion or processing of a controlled substance either directly or indirectly or by extraction from substances of natural origin or independently by means of chemical synthesis or by a combination of extraction and chemical synthesis and includes any packaging or repackaging of the substance or labeling or relabeling of its container, except that[D> this term<D] [A>"manufacture"<A] does not include the preparation or compounding of a controlled substance by an individual for the individual's own lawful use or the preparation, compounding, packaging or labeling of a controlled substance:
+
+(1) By a practitioner or the practitioner's agent pursuant to a lawful order of a practitioner as an incident to the practitioner's administering or dispensing of a controlled substance in the course of the practitioner's professional practice; or
+
+(2) by a practitioner or by the practitioner's authorized agent under such practitioner's supervision for the purpose of or as an incident to research, teaching or chemical analysis or by a pharmacist or medical care facility as an incident to dispensing of a controlled substance.
+
+(aa) "Marijuana" means all parts of all varieties of the plant Cannabis whether growing or not, the seeds thereof, the resin extracted from any part of the plant and every compound, manufacture, salt, derivative, mixture or preparation of the plant, its seeds or resin. It does not include:
+
+(1) The mature stalks of the plant, fiber produced from the stalks, oil or cake made from the seeds of the plant, any other compound, manufacture, salt, derivative, mixture or preparation of the mature stalks, except the resin extracted therefrom, fiber, oil or cake or the sterilized seed of the plant that is incapable of germination;
+
+(2) any substance listed in schedules II through V of the uniform controlled substances act;
+
+(3) drug products approved by the United States food and drug administration as of the effective date of this act;
+
+(4) cannabidiol (other trade name: 2-[(3-methyl-6-(1-methylethenyl)-2-cyclohexen-1-yl]-5-pentyl-1,3-benzenediol); or
+
+(5) industrial hemp as defined in K.S.A. 2-3901, and amendments thereto, when cultivated, produced, possessed or used for activities authorized by the commercial industrial hemp act.
+
+(bb) "Medical care facility"[D> shall have the meaning ascribed to that term<D] [A>means the same as defined<A] in K.S.A. 65-425, and amendments thereto.
+
+(cc) "Mid-level practitioner" means a certified nurse-midwife engaging in the independent practice of midwifery under the independent practice of midwifery act, an advanced practice registered nurse issued a license pursuant to K.S.A. 65-1131, and amendments thereto, who has authority to prescribe drugs under K.S.A. 65-1130, and amendments thereto, or a physician assistant licensed under the physician assistant licensure act who has authority to prescribe drugs pursuant to a written agreement with a supervising physician under K.S.A. 65-28a08, and amendments thereto.
+
+(dd) "Narcotic drug" means any of the following whether produced directly or indirectly by extraction from substances of vegetable origin or independently by means of chemical synthesis or by a combination of extraction and chemical synthesis:
+
+(1) Opium and opiate and any salt, compound, derivative or preparation of opium or opiate;
+
+(2) any salt, compound, isomer, derivative or preparation thereof that is chemically equivalent or identical with any of the substances referred to in paragraph (1) but not including the isoquinoline alkaloids of opium;
+
+(3) opium poppy and poppy straw;
+
+(4) coca leaves and any salt, compound, derivative or preparation of coca leaves, and any salt, compound, isomer, derivative or preparation thereof that is chemically equivalent or identical with any of these substances, but not including decocainized coca leaves or extractions of coca leaves that do not contain cocaine or ecgonine.
+
+(ee) "Opiate" means any substance having an addiction-forming or addiction-sustaining liability similar to morphine or being capable of conversion into a drug having addiction-forming or addiction-sustaining liability. It does not include, unless specifically designated as controlled under K.S.A. 65-4102, and amendments thereto, the dextrorotatory isomer of 3-methoxy-n-methylmorphinan and its salts (dextromethorphan). It does include its racemic and levorotatory forms.
+
+(ff) "Opium poppy" means the plant of the species Papaver somniferum l. except its seeds.
+
+(gg) "Person" means an individual, corporation, government, or governmental subdivision or agency, business trust, estate, trust, partnership or association or any other legal entity.
+
+(hh) "Pharmacist" means any natural person licensed under K.S.A. 65-1625 et seq., and amendments thereto, to practice pharmacy.
+
+(ii) "Pharmacist intern" means: (1) A student currently enrolled in an accredited pharmacy program; (2) a graduate of an accredited pharmacy program serving such person's internship; or (3) a graduate of a pharmacy program located outside of the United States that is not accredited and who had successfully passed equivalency examinations approved by the board.
+
+(jj) "Pharmacy prescription application" means software that is used to process prescription information, is installed on a pharmacy's computers and servers, and is controlled by the pharmacy.
+
+(kk) "Poppy straw" means all parts, except the seeds, of the opium poppy, after mowing.
+
+(ll) "Practitioner" means a person licensed to practice medicine and surgery, dentist, podiatrist, veterinarian, optometrist, or scientific investigator or other person authorized by law to use a controlled substance in teaching or chemical analysis or to conduct research with respect to a controlled substance.
+
+(mm) "Prescriber" means a practitioner or a mid-level practitioner.
+
+(nn) "Production" includes the manufacture, planting, cultivation, growing or harvesting of a controlled substance.
+
+(oo) [A>"Psilocybin" does not include the pharmaceutical composition of crystalline polymorph psilocybin, known as COMP 360 or any such trade name approved by the United States food and drug administration.<A]
+
+[A>(pp)<A] "Readily retrievable" means that records kept by automatic data processing applications or other electronic or mechanized recordkeeping systems can be separated out from all other records within a reasonable time not to exceed 48 hours of a request from the board or other authorized agent or that hard-copy records are kept on which certain items are asterisked, redlined or in some other manner visually identifiable apart from other items appearing on the records.
+
+[D>(pp)<D][A>(qq)<A] "Ultimate user" means a person who lawfully possesses a controlled substance for such person's own use or for the use of a member of such person's household or for administering to an animal owned by such person or by a member of such person's household.
+
+Sec. 2. On and after the date of publication in the Kansas register of the notice prescribed in section 3, K.S.A. 2024 Supp. 65-4111 is hereby amended to read as follows:
+
+65-4111. (a) The controlled substances listed in this section are included in schedule IV and the number set forth opposite each drug or substance is the DEA controlled substances code that has been assigned to it.
+
+(b) Any material, compound, mixture or preparation that contains any quantity of the following substances including its salts, isomers and salts of isomers whenever the existence of such salts, isomers and salts of isomers is possible within the specific chemical designation and having a potential for abuse associated with a depressant effect on the central nervous system:
+
+(1)    Alprazolam...............................................................................................2882
+(2)    Barbital.................................................................................................2145
+(3)    Brexanolone..............................................................................................2400
+(4)    Bromazepam...............................................................................................2748
+(5)    Camazepam................................................................................................2749
+(6)    Carisoprodol.............................................................................................8192
+(7)    Chloral betaine..........................................................................................2460
+(8)    Chloral hydrate..........................................................................................2465
+(9)    Chlordiazepoxide.........................................................................................2744
+(10)   Clobazam.................................................................................................2751
+(11)   Clonazepam...............................................................................................2737
+(12)   Clorazepate..............................................................................................2768
+(13)   Clotiazepam..............................................................................................2752
+(14)   Cloxazolam...............................................................................................2753
+(15)   Daridorexant.............................................................................................2410
+(16)   Delorazepam..............................................................................................2754
+(17)   Diazepam.................................................................................................2765
+(18)   Dichloralphenazone.......................................................................................2467
+(19)   Estazolam................................................................................................2756
+(20)   Ethchlorvynol............................................................................................2540
+(21)   Ethinamate...............................................................................................2545
+(22)   Ethyl loflazepate........................................................................................2758
+(23)   Fludiazepam..............................................................................................2759
+(24)   Flunitrazepam............................................................................................2763
+(25)   Flurazepam...............................................................................................2767
+(26)   Fospropofol..............................................................................................2138
+(27)   Halazepam................................................................................................2762
+(28)   Haloxazolam..............................................................................................2771
+(29)   Ketazolam................................................................................................2772
+(30)   Lemborexant..............................................................................................2245
+(31)   Loprazolam...............................................................................................2773
+(32)   Lorazepam................................................................................................2885
+(33)   Lormetazepam.............................................................................................2774
+(34)   Mebutamate...............................................................................................2800
+(35)   Medazepam................................................................................................2836
+(36)   Meprobamate..............................................................................................2820
+(37)   Methohexital.............................................................................................2264
+(38)   Methylphenobarbital (mephobarbital)......................................................................2250
+(39)   Midazolam................................................................................................2884
+(40)   Nimetazepam..............................................................................................2837
+(41)   Nitrazepam...............................................................................................2834
+(42)   Nordiazepam..............................................................................................2838
+(43)   Oxazepam.................................................................................................2835
+(44)   Oxazolam.................................................................................................2839
+(45)   Paraldehyde..............................................................................................2585
+(46)   Petrichloral.............................................................................................2591
+(47)   Phenobarbital............................................................................................2285
+(48)   Pinazepam................................................................................................2883
+(49)   Prazepam.................................................................................................2764
+(50)   Quazepam.................................................................................................2881
+(51)   Remimazolam..............................................................................................2846
+(52)   Temazepam................................................................................................2925
+(53)   Tetrazepam...............................................................................................2886
+(54)   Triazolam................................................................................................2887
+(55)   Zolpidem.................................................................................................2783
+(56)   Zaleplon.................................................................................................2781
+(57)   Zopiclone................................................................................................2784
+(58)   Alfaxalone...............................................................................................2731
+(59)   Suvorexant...............................................................................................2223
+
+(c) Any material, compound, mixture or preparation that contains any quantity of lorcaserin (1625), including its salts, isomers and salts of such isomers, whenever the existence of such salts, isomers and salts of isomers is possible (21 U.S.C. § 812; 21 C.F.R. § 1308.14).
+
+(d) Unless specifically excepted or unless listed in another schedule, any material, compound, mixture or preparation that contains any quantity of the following substances having a stimulant effect on the central nervous system, including its salts, isomers (whether optical, position or geometric) and salts of such isomers whenever the existence of such salts, isomers and salts of isomers is possible within the specific chemical designation:
+
+(1)    Cathine ((+)-norpseudoephedrine).........................................................................1230
+(2)    Diethylpropion...........................................................................................1610
+(3)    Fencamfamin..............................................................................................1760
+(4)    Fenproporex..............................................................................................1575
+(5)    Mazindol.................................................................................................1605
+(6)    Mefenorex................................................................................................1580
+(7)    Pemoline (including organometallic
+       complexes and chelates thereof)..........................................................................1530
+(8)    Phentermine..............................................................................................1640
+
+The provisions of subsection (d)(8) shall expire on the date phentermine and its salts and isomers are removed from schedule IV of the federal controlled substances act (21 U.S.C. § 812; 21 C.F.R. § 1308.14).
+
+(9)    Pipradrol................................................................................................1750
+(10)   Serdexmethylphenidate....................................................................................1729
+(11)   SPA((-)-1-dimethylamino-1, 2-diphenylethane).............................................................1635
+(12)   Sibutramine..............................................................................................1675
+(13)   Solriamfetol (2-amino-3-phenylpropyl carbamate;
+       benzenepropanol, beta-amino-, carbamate (ester)).........................................................1650
+(14)   Mondafinil...............................................................................................1680
+
+(e) Unless specifically excepted or unless listed in another schedule, any material, compound, mixture or preparation that contains any quantity of the following, including salts thereof:
+
+(1)    Pentazocine..............................................................................................9709
+(2)    Butorphanol (including its optical isomers)..............................................................9720
+(3)    Eluxadoline (5-[[[(2S)-2-amino-3-[4-aminocarbonyl)-2,6-dimethylphenyl]-1-oxopropyl][(1S)-1-(4-phenyl-1H-imidazol-2-yl)ethyl]amino]methyl]-2-methoxybenzoic
+       acid) (including its
+       optical isomers) and its salts, isomers, and salts of isomers............................................9725
+
+(f) Unless specifically excepted or unless listed in another schedule, any material, compound, mixture or preparation containing any of the following narcotic drugs, or their salts calculated as the free anhydrous base or alkaloid, in limited quantities as set forth below:
+
+(1)    Not more than 1 milligram of difenoxin and not less than 25
+       micrograms of atropine sulfate per dosage unit...........................................................9167
+(2)    Dextropropoxyphene (alpha-(+)-4-dimethylamino-1, 2-diphenyl-3-methyl-2-propion-oxybutane)................9278
+(3)    2-[(dimethylamino)methyl]-1-(3-methoxyphenyl)cyclohexanol,
+       its salts, optical and geometric isomers and salts of these isomers
+       (including tramadol).....................................................................................9752
+
+(g) Butyl nitrite and its salts, isomers, esters, ethers or their salts.
+
+(h) [A>Any pharmaceutical composition of crystalline polymorph psilocybin approved by the United States food and drug administration.<A]
+
+[A>(i)<A] The board may except by rule and regulation any compound, mixture or preparation containing any depressant substance listed in subsection (b) from the application of all or any part of this act if the compound, mixture or preparation contains one or more active medicinal ingredients not having a depressant effect on the central nervous system, and if the admixtures are included therein in combinations, quantity, proportion or concentration that vitiate the potential for abuse of the substances that have a depressant effect on the central nervous system.
+
+New Sec. 3. When the pharmaceutical composition of crystalline polymorph psilocybin is approved as a drug product by the United States food and drug administration, the attorney general shall certify such drug product's approval to the secretary of state within seven days after its approval. Upon receipt of such certification, the secretary of state shall publish such certification in the Kansas register.
+
+Sec. 4. On and after the date of publication in the Kansas register of the certification prescribed in section 3, K.S.A. 2024 Supp. 65-4101 and K.S.A. 65-4111 is hereby repealed.
+
+Sec. 5. This act shall take effect and be in force from and after its publication in the statute book.

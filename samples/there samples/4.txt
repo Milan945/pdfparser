@@ -1,0 +1,65 @@
+Session of 2025
+
+HOUSE BILL No. 2222
+
+By Committee on Transportation
+
+Requested by Lieutenant Roy Wise on behalf of the Kansas Highway Patrol
+
+2-3
+
+AN ACT concerning driving; relating to ignition interlock devices; requiring manufacturers of such devices to pay fees to the highway patrol for the administration of the ignition interlock program; creating the IID fee program fund; amending K.S.A. 8-1016 and repealing the existing section.
+
+Be it enacted by the Legislature of the State of Kansas:
+
+Section 1. K.S.A. 8-1016 is hereby amended to read as follows:
+
+8-1016. (a) The superintendent of the highway patrol may adopt rules and regulations for:
+
+(1) The approval by the highway patrol of models and classes of ignition interlock devices suitable for use by persons whose driving privileges have been restricted to driving a vehicle equipped with such a device;
+
+(2) the calibration and maintenance of such devices, which shall be the responsibility of the manufacturer;
+
+(3) ensuring that each manufacturer provides a reasonable statewide service network where such devices may be obtained, repaired, replaced or serviced and such service network can be accessed 24 hours per day through a toll-free phone service;
+
+(4) the requirements for proper use and maintenance of a certified ignition interlock device by a person during any time period the person's license is restricted by the division to only operating a motor vehicle with an ignition interlock device installed; and
+
+(5) the reporting requirements for the manufacturer to the division and the highway patrol relating to a person's proper use and maintenance of a certified ignition interlock device.
+
+(b) In adopting rules and regulations for approval of ignition interlock devices under subsection (a), the superintendent of the highway patrol shall require that the manufacturer or the manufacturer's representatives calibrate and maintain the devices at intervals not to exceed 60 days. Calibration and maintenance shall include, but not be limited to: Physical inspection of the device, the vehicle and wiring of the device to the vehicle for signs of tampering; calibration of the device and downloading of all data contained within the device's memory; and reporting of any violation or noncompliance to the division and the highway patrol.
+
+(c) (1) If the highway patrol approves an ignition interlock device in accordance with rules and regulations adopted under subsection (a), the highway patrol shall give written notice of the approval to the manufacturer of the device. Such notice shall be admissible in any civil or criminal proceeding in this state.
+
+(2) The manufacturer of an ignition interlock device shall reimburse the highway patrol for any cost incurred in approving or disapproving such device under this section.
+
+[A>(3) (A) The manufacturer of an ignition interlock device shall pay the following fees to the highway patrol for the administration, oversight and monitoring of the ignition interlock program:<A]
+
+[A>(i) A one-time fee of $10 for each ignition interlock device installed by the manufacturer in this state on and after July 1, 2025, counted and remitted on a monthly basis; and<A]
+
+[A>(ii) except as provided in paragraph (3)(B), a fee of $5 per month for each ignition interlock device in use and maintained by the manufacturer in this state, counted and remitted on a monthly basis.<A]
+
+[A>(B) No fee described in paragraph (3)(A)(ii) shall be assessed or remitted if the ignition interlock device is installed for and used by a person who the division determines is eligible for reduced ignition interlock device program costs pursuant to subsection (f).<A]
+
+[A>(4) There is hereby established in the state treasury the IID fee program fund. Such fund shall be administered by the superintendent of the highway patrol. All expenditures from the IID fee program fund shall be made in accordance with appropriation acts upon warrants of the director of accounts and reports issued pursuant to vouchers approved by the superintendent of the highway patrol or the superintendent of the highway patrol's designee. All moneys received by the superintendent of the highway patrol pursuant to this subsection shall be remitted to the state treasurer in accordance with the provisions of K.S.A. 75-4215, and amendments thereto. Upon receipt of each such remittance, the state treasurer shall deposit the entire amount in the state treasury to the credit of the IID fee program fund. All moneys credited to the IID fee program fund shall be used only for the purpose of funding the administration, oversight and monitoring of the ignition interlock program.<A]
+
+(d) Neither the state nor any agency, officer or employee thereof shall be liable in any civil or criminal proceeding arising out of the use of an ignition interlock device approved under this section.
+
+(e) All rules and regulations of the secretary of revenue adopted pursuant to this section, prior to its amendment by this act, that are described in subsection (a) and are in effect on June 30, 2022, shall be deemed to be the rules and regulations of the superintendent of the highway patrol and shall continue to be effective until amended, revoked or nullified pursuant to law.
+
+(f) (1) Any person whose license is restricted to operating only a motor vehicle with an ignition interlock device installed may request reduced ignition interlock device program costs by submitting a request to the division in a form and manner prescribed by the division. The division shall review each request submitted pursuant to this subsection to determine whether the person is eligible for reduced ignition interlock device program costs. A person shall be eligible for reduced ignition interlock device program costs if the:
+
+(A) Person's annual household income is less than or equal to 150% of the federal poverty level;
+
+(B) person is enrolled in the food assistance, child care subsidy or cash assistance program pursuant to K.S.A. 39-709, and amendments thereto; or
+
+(C) person is currently eligible for the low income energy assistance program as determined by the department for children and families.
+
+(2) If the division determines that the person is eligible for reduced ignition interlock device program costs, the person shall be responsible for paying 50% of the program costs. The manufacturer providing the person's device shall adjust the manufacturer's charge for services accordingly.
+
+(3) The secretary of revenue shall adopt rules and regulations[D> prior to March 1, 2023,<D] establishing the requirements and guidelines for receiving reduced ignition interlock device program costs pursuant to this subsection.
+
+(g) As used in this section, "federal poverty level" means the most recent poverty income guidelines published in the calendar year by the United States department of health and human services.
+
+Sec. 2. K.S.A. 8-1016 is hereby repealed.
+
+Sec. 3. This act shall take effect and be in force from and after its publication in the statute book.
