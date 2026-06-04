@@ -4,25 +4,30 @@ Turns a list[Span] into the markup string Doctly produces:
   struck  -> [D>..<D]   (deletion)
   italic  -> [A>..<A]   (addition)
   neither -> plain text
-Consecutive spans of the same decoration are merged into a single tag, and
-leading/trailing whitespace is kept OUTSIDE the tag so the markup hugs the
-words (matching Doctly). Text is Unicode-normalized en route.
+Consecutive spans of the same decoration are merged into a single tag. Whitespace
+handling matches Doctly's actual convention (confirmed against the KS2206/CA351
+Doctly references and the 1-4 gold files):
+  - DELETIONS keep their LEADING whitespace INSIDE the tag ("of[D> the<D]"),
+    because the struck run in the PDF geometry includes the space before the
+    deleted word; trailing whitespace stays outside.
+  - ADDITIONS hug the word: leading AND trailing whitespace stay OUTSIDE
+    (" [A>a<A] ").
+  - Abutting tags are NOT separated by a synthetic space; any space between a
+    deletion and the following addition comes from the addition's (stripped)
+    leading space, so "machine[D>;<D][A>,<A]" stays abutting while
+    "of[D> the<D] [A>a<A]" gets its space from " a".
+Text is Unicode-normalized en route.
 
 Reflow/paragraph structure is NOT applied here (it is applied by reflow.py,
 which feeds one paragraph's spans at a time); this returns one continuous
 string. See docs/superpowers/plans/2026-06-03-emit-tag-merge.md.
 """
 from __future__ import annotations
-import re
 
 from netscan.types import Span
 from netscan.normalize import normalize_unicode
 
 _TAGS = {"D": ("[D>", "<D]"), "A": ("[A>", "<A]")}
-# An end tag immediately followed by a start tag (e.g. a struck enumerator
-# directly followed by its italic replacement, "(c)(d)"): Doctly puts a space
-# between them.
-_ADJACENT_TAGS = re.compile(r"(<[DA]\])(\[[DA]>)")
 
 
 def _decoration(span: Span) -> str:
@@ -41,8 +46,9 @@ def render_markup(spans: list[Span]) -> str:
     - two same-decoration runs separated only by whitespace also merge, pulling
       that whitespace INSIDE the tag (so a wrapped phrase like "(a) through (d)"
       is a single addition, not two);
-    - leading/trailing whitespace of a tagged run stays OUTSIDE the tag;
-    - an end tag directly abutting a start tag gets a separating space.
+    - DELETIONS keep leading whitespace inside the tag, trailing outside;
+    - ADDITIONS keep both leading and trailing whitespace outside the tag;
+    - abutting end/start tags are left abutting (no synthetic space).
     """
     # 1. merge consecutive same-decoration spans (normalized text)
     runs: list[list[str]] = []   # [decoration, text]
@@ -64,19 +70,25 @@ def render_markup(spans: list[Span]) -> str:
             del runs[i:i + 2]
         else:
             i += 1
-    # 3. render each run, keeping boundary whitespace outside the tag
+    # 3. render each run with the per-decoration whitespace convention
     out: list[str] = []
     for deco, text in runs:
         if deco == "":
             out.append(text)
             continue
-        core = text.strip()
-        if not core:                     # whitespace-only -> never an empty tag
+        if not text.strip():             # whitespace-only -> never an empty tag
             out.append(text)
             continue
-        lead = text[: len(text) - len(text.lstrip())]
-        trail = text[len(text.rstrip()):]
         open_tag, close_tag = _TAGS[deco]
-        out.append(f"{lead}{open_tag}{core}{close_tag}{trail}")
-    # 4. separate directly-abutting end/start tags with a space
-    return _ADJACENT_TAGS.sub(r"\1 \2", "".join(out))
+        trail = text[len(text.rstrip()):]
+        if deco == "D":
+            # deletions keep their leading whitespace inside the tag (the struck
+            # run includes the space before the deleted word); trailing outside.
+            body = text[: len(text.rstrip())] if trail else text
+            out.append(f"{open_tag}{body}{close_tag}{trail}")
+        else:
+            # additions hug the word: both boundaries' whitespace stay outside.
+            core = text.strip()
+            lead = text[: len(text) - len(text.lstrip())]
+            out.append(f"{lead}{open_tag}{core}{close_tag}{trail}")
+    return "".join(out)

@@ -1,53 +1,49 @@
-import React, { useRef } from 'react'
 import { parseMarkup } from '../lib/parseMarkup'
+import { useSyncedScroll } from '../lib/useSyncedScroll'
 
 interface Props {
   markup: string
   filename: string
-  onScrollRatio: (ratio: number) => void
+  ratio: number
+  onRatio: (r: number) => void
 }
 
-export function MarkupPanel({ markup, filename, onScrollRatio }: Props) {
-  const ref = useRef<HTMLDivElement>(null)
+/** Rendered preview: deletions struck through in red, additions in green, with a
+ *  line-number gutter aligned to the raw markup panel. */
+export function MarkupPanel({ markup, filename, ratio, onRatio }: Props) {
+  const { ref, handleScroll } = useSyncedScroll(ratio, onRatio)
+  const lines = markup.split('\n')
 
-  function handleScroll() {
-    const el = ref.current
-    if (!el) return
-    const max = el.scrollHeight - el.clientHeight
-    onScrollRatio(max > 0 ? el.scrollTop / max : 0)
+  function download() {
+    const blob = new Blob([markup], { type: 'text/plain' })
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(blob)
+    a.download = filename
+    a.click()
   }
-
-  const segments = parseMarkup(markup)
 
   return (
     <div className="panel">
       <div className="panel-header">
-        <span className="panel-title">Markup Preview</span>
-        <a
-          className="download-btn"
-          href={URL.createObjectURL(new Blob([markup], { type: 'text/plain' }))}
-          download={filename}
-        >
-          Download
-        </a>
+        <span className="panel-title">Preview</span>
+        <button className="download-btn" onClick={download}>Download</button>
       </div>
-      <div className="panel-body" ref={ref} onScroll={handleScroll}>
-        {segments.length === 0 && (
-          <p className="empty-notice">No amendment markup detected.</p>
-        )}
-        {segments.map((seg, i) => {
-          if (seg.type === 'deletion') {
-            return (
-              <span key={i} className="deletion">{seg.text}</span>
-            )
-          }
-          if (seg.type === 'addition') {
-            return (
-              <span key={i} className="addition">{seg.text}</span>
-            )
-          }
-          return <span key={i}>{seg.text}</span>
-        })}
+      <div className="panel-body render-body" ref={ref} onScroll={handleScroll}>
+        {lines.map((line, i) => (
+          <div className="render-row" key={i}>
+            <span className="ln">{i + 1}</span>
+            <span className="render-content">
+              {parseMarkup(line).map((seg, j) => {
+                if (seg.type === 'deletion')
+                  return <span key={j} className="deletion">{seg.text}</span>
+                if (seg.type === 'addition')
+                  return <span key={j} className="addition">{seg.text}</span>
+                return <span key={j}>{seg.text}</span>
+              })}
+              {line === '' && '​'}
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   )

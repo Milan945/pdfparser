@@ -6,6 +6,7 @@ Also a CLI:  python -m netscan.pipeline <bill.pdf> <STATE> [out.txt]
 """
 from __future__ import annotations
 import os
+import re
 import sys
 import tempfile
 from pathlib import Path
@@ -19,9 +20,23 @@ from netscan.structure import (
 )
 from netscan.geometry import extract_page_spans
 from netscan.profiles import PROFILES
-from netscan.reflow import paragraphs
+from netscan.reflow import lines_of, paragraphs_from_lines
 from netscan.emit import render_markup
 from netscan.scope import suppress_preamble_additions, has_enacting_clause
+
+# "...amended to read as follows:" followed (same line) by the quoted statute's
+# citation number -> split into two paragraphs at the colon.
+_RE_AMEND_FORMULA = re.compile(r"(read as follows:) +(\d+-[\d,]+[a-zA-Z]*\.)")
+# Runs of 2+ ASCII spaces (justified-text gaps) -> a single space.
+_RE_MULTISPACE = re.compile(r" {2,}")
+# A compact-style all-caps header ("SECTION 2--DEFINITIONS", "ARTICLE IV--...")
+# is its own paragraph; the body that follows it (first mixed-case word) starts a
+# new one. The title may itself wrap across lines, so match the whole all-caps run
+# (incl. em- or double-hyphen) up to the first Capitalized-then-lowercase word.
+_RE_SECTION_HEADER = re.compile(
+    r"^((?:SECTION \d+|ARTICLE [IVXLC]+)(?:--|—)[A-Z][A-Z0-9 ,'.\-]*?) ([A-Z][a-z])",
+    re.MULTILINE,
+)
 
 
 def convert(pdf_path: str, state: str) -> str:
@@ -35,11 +50,12 @@ def convert(pdf_path: str, state: str) -> str:
     # addition is hidden.
     doc_text = "".join(c.text for g in pages for c in g.chars)
     operative = not has_enacting_clause(doc_text)
-    # Reflow per page: lines_of sorts spans by `top`, but `top` resets each page,
-    # so pooling pages before reflow would interleave reading order (and float
-    # each page's top-of-page header to the document front). Grouping per page
-    # and concatenating in page order preserves reading order.
-    paras: list = []
+    # Reflow across pages: `lines_of` sorts spans by `top`, but `top` resets each
+    # page, so we group lines per page (preserving within-page reading order) and
+    # concatenate them in page order. Paragraph grouping then runs once over the
+    # whole line stream, so a paragraph that wraps across a page boundary stays a
+    # single paragraph instead of being split at the page break.
+    all_lines: list = []
     for geo in pages:
         # align fractions FIRST, on the raw stream order (later passes re-cluster
         # chars by line, which would split a slash from its denominator digit).
@@ -50,9 +66,19 @@ def convert(pdf_path: str, state: str) -> str:
         spans = extract_page_spans(geo)
         # Suppress italic-as-addition in the front matter / enacting clause.
         spans, operative = suppress_preamble_additions(spans, operative)
-        paras.extend(paragraphs(spans, profile))
+        all_lines.extend(lines_of(spans))
+    paras = paragraphs_from_lines(all_lines, profile)
     rendered = [render_markup(p).strip() for p in paras]
     out = "\n\n".join(r for r in rendered if r)
+    # The amending formula "...amended to read as follows:" introduces the quoted
+    # statute, which Doctly emits as its own paragraph even though the PDF keeps
+    # the citation ("8-1567. (a) ...") on the same physical line. Break there.
+    out = _RE_AMEND_FORMULA.sub(r"\1\n\n\2", out)
+    # Justified body text yields runs of 2+ spaces between words; Doctly collapses
+    # these to a single space. (Collapses spaces only, never the "\n\n" paragraph
+    # breaks.)
+    out = _RE_MULTISPACE.sub(" ", out)
+    out = _RE_SECTION_HEADER.sub(r"\1\n\n\2", out)
     if profile.em_dash_to_double_hyphen:
         out = out.replace("—", "--")
     return out

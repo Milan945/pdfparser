@@ -43,10 +43,11 @@ def test_whitespace_only_run_of_distinct_decoration_is_not_tagged():
 
 
 def test_interleaved_delete_add_do_not_merge():
-    # different decorations never merge; adjacent end/start tags get a separating
-    # space (Doctly's convention for a struck item directly before its addition).
+    # Different decorations never merge. With no whitespace in the source spans,
+    # the tags stay abutting (no synthetic space) -- matching Doctly's real
+    # output, e.g. "machine[D>;<D][A>,<A]".
     spans = [_span("old", struck=True), _span("new", italic=True)]
-    assert render_markup(spans) == "[D>old<D] [A>new<A]"
+    assert render_markup(spans) == "[D>old<D][A>new<A]"
 
 
 def test_normalization_is_applied_to_tag_text():
@@ -73,6 +74,8 @@ def test_ks_merge_collapses_tag_count():
     out = render_markup(spans)
     # merged output has far fewer addition tags than the unmerged 234
     assert out.count("[A>") < 150
-    # tags must not wrap leading spaces (whitespace stays outside)
-    assert "[A> " not in out and "[D> " not in out
-    assert " <A]" not in out and " <D]" not in out
+    # additions hug the word: no leading/trailing space inside an [A> tag.
+    assert "[A> " not in out and " <A]" not in out
+    # deletions strip trailing space (but DO keep leading space inside, e.g.
+    # "of[D> the<D]" -- so "[D> " is allowed and expected).
+    assert " <D]" not in out

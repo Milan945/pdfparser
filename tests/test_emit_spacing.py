@@ -16,9 +16,19 @@ def test_same_decoration_separated_by_space_merges_into_one_tag():
     assert render_markup(spans) == "[A>(a) through (d)<A]"
 
 
-def test_adjacent_delete_then_add_tags_get_a_space():
+def test_adjacent_delete_then_add_tags_stay_abutting():
+    # No whitespace in the source -> tags abut with no synthetic space, matching
+    # Doctly's "machine[D>;<D][A>,<A]". A space only appears when the source
+    # carries one (struck leading space, or the addition's stripped lead space).
     spans = [_s("(c)", struck=True), _s("(d)", italic=True)]
-    assert render_markup(spans) == "[D>(c)<D] [A>(d)<A]"
+    assert render_markup(spans) == "[D>(c)<D][A>(d)<A]"
+
+
+def test_struck_leading_space_stays_inside_delete_tag():
+    # "of" + struck " the" + italic " a" -> "of[D> the<D] [A>a<A]"
+    spans = [_s("of"), _s(" the", struck=True), _s(" a", italic=True),
+             _s(" practitioner.")]
+    assert render_markup(spans) == "of[D> the<D] [A>a<A] practitioner."
 
 
 def test_continuous_deletion_across_two_spans_with_inner_space_stays_one_tag():

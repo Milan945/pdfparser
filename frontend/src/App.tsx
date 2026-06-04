@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import './App.css'
 import { UploadZone } from './components/UploadZone'
 import { PdfPanel } from './components/PdfPanel'
+import { RawMarkupPanel } from './components/RawMarkupPanel'
 import { MarkupPanel } from './components/MarkupPanel'
-import { EditorPanel } from './components/EditorPanel'
 
 type AppState = 'idle' | 'uploading' | 'ready' | 'needs-state' | 'error'
 
@@ -118,20 +118,28 @@ export default function App() {
     )
   }
 
+  const rawName = result!.filename.replace(/\.[^.]+$/, '') + '.markup.txt'
   return (
     <div className="app-ready">
       <div className="top-bar">
+        <span className="brand">NetScan Bill Converter</span>
         <span className="state-badge">{result!.state} — auto-detected</span>
         <button className="reset-btn" onClick={handleReset}>Upload new bill</button>
       </div>
       <div className="panels">
-        <PdfPanel sessionId={result!.sessionId} scrollRatio={scrollRatio} />
+        <PdfPanel sessionId={result!.sessionId} ratio={scrollRatio} onRatio={setScrollRatio} />
+        <RawMarkupPanel
+          markup={result!.markup}
+          filename={rawName}
+          ratio={scrollRatio}
+          onRatio={setScrollRatio}
+        />
         <MarkupPanel
           markup={result!.markup}
           filename={result!.filename}
-          onScrollRatio={setScrollRatio}
+          ratio={scrollRatio}
+          onRatio={setScrollRatio}
         />
-        <EditorPanel initialMarkup={result!.markup} filename={result!.filename} />
       </div>
     </div>
   )

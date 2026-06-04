@@ -40,7 +40,17 @@ body { font-family: system-ui, sans-serif; font-size: 14px; background: #f5f5f5;
   border-bottom: 1px solid #ddd;
   flex-shrink: 0;
 }
-.state-badge { font-weight: 600; color: #333; }
+.brand { font-weight: 700; color: #111827; font-size: 15px; margin-right: auto; }
+.state-badge {
+  font-weight: 600;
+  color: #3730a3;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 12px;
+  margin-right: 12px;
+}
 
 /* ---- Three panels ---- */
 .panels {
@@ -54,9 +64,10 @@ body { font-family: system-ui, sans-serif; font-size: 14px; background: #f5f5f5;
 .panel {
   display: flex;
   flex-direction: column;
-  border-right: 1px solid #ddd;
+  border-right: 1px solid #d8d8de;
   background: #fff;
   overflow: hidden;
+  min-width: 0;
 }
 .panel:last-child { border-right: none; }
 
@@ -65,40 +76,90 @@ body { font-family: system-ui, sans-serif; font-size: 14px; background: #f5f5f5;
   align-items: center;
   justify-content: space-between;
   padding: 8px 12px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #e8e8ec;
   flex-shrink: 0;
-  background: #fafafa;
+  background: #fafafb;
+  height: 38px;
 }
-.panel-title { font-weight: 600; font-size: 13px; color: #444; }
+.panel-title {
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6b7280;
+}
 
 .panel-body {
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
-  white-space: pre-wrap;
-  line-height: 1.6;
-  font-family: 'Georgia', serif;
-  font-size: 13px;
+  overflow-x: hidden;
 }
 
-/* ---- Markup colors ---- */
-.deletion { color: #c00; text-decoration: line-through; }
-.addition { color: #007a00; }
+/* ---- Dark (center) panel ---- */
+.panel-dark { background: #1e1e24; }
+.panel-dark .panel-header {
+  background: #26262e;
+  border-bottom-color: #34343e;
+}
+.panel-dark .panel-title { color: #9ca3af; }
 
-/* ---- Editor ---- */
-.editor-body { padding: 0; }
-.editor-textarea {
+/* ---- PDF panel ---- */
+.pdf-body { background: #525659; padding: 12px; text-align: center; }
+.pdf-page {
+  display: block;
   width: 100%;
-  height: 100%;
-  border: none;
-  outline: none;
-  resize: none;
-  padding: 16px;
-  font-family: 'Courier New', monospace;
-  font-size: 13px;
-  line-height: 1.6;
-  background: #fff;
+  height: auto;
+  margin: 0 auto 12px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
 }
+.panel-error { color: #fca5a5; padding: 16px; font-size: 13px; }
+
+/* ---- Line-numbered rows (shared) ---- */
+.code-row, .render-row {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  align-items: start;
+}
+.ln {
+  text-align: right;
+  padding: 0 12px 0 4px;
+  color: #b6b6c0;
+  font-family: ui-monospace, 'Consolas', monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.panel-dark .ln { color: #5b5b66; }
+
+/* ---- Raw markup (center) ---- */
+.code-body { padding: 10px 0; }
+.code-content {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-family: ui-monospace, 'Consolas', monospace;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: #d7d7df;
+  padding-right: 14px;
+}
+.raw-del { color: #f4a3a3; }
+.raw-add { color: #93d6a0; }
+.code-content .tok { color: #6b7280; }
+
+/* ---- Rendered preview (right) ---- */
+.render-body { padding: 10px 0; }
+.render-content {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: #1f2330;
+  padding-right: 14px;
+}
+.deletion { color: #d12f2f; text-decoration: line-through; }
+.addition { color: #1a8f3c; text-decoration: underline; }
 
 /* ---- Buttons ---- */
 .download-btn {
